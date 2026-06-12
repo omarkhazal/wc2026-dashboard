@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Cup 2026 Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="logo">
+      🏆
+      <h2>WC 2026</h2>
+    </div>
+
+    <nav>
+      <a href="#">Dashboard</a>
+      <a href="#">Live Matches</a>
+      <a href="#">Groups</a>
+      <a href="#">Teams</a>
+      <a href="#">Bracket</a>
+      <a href="#">Venues</a>
+      <a href="#">Stats</a>
+    </nav>
+  </aside>
+
+  <main>
+
+    <section class="hero">
+      <div>
+        <h1>FIFA World Cup 2026</h1>
+        <p>Canada • Mexico • USA</p>
+      </div>
+
+      <div id="countdown"></div>
+    </section>
+
+    <section class="stats">
+
+      <div class="card stat-card">
+        <h3>Matches</h3>
+        <span>104</span>
+      </div>
+
+      <div class="card stat-card">
+        <h3>Teams</h3>
+        <span>48</span>
+      </div>
+
+      <div class="card stat-card">
+        <h3>Groups</h3>
+        <span>12</span>
+      </div>
+
+      <div class="card stat-card">
+        <h3>Hosts</h3>
+        <span>3</span>
+      </div>
+
+    </section>
+
+    <section class="grid">
+
+     <div class="card focus-match">
+
+  <div class="live-badge">
+    🔴 LIVE
+  </div>
+
+  <h2>Quarter Final</h2>
+
+  <div class="team-row">
+    <span>🇫🇷 France</span>
+    <strong>2</strong>
+  </div>
+
+  <div class="team-row">
+    <span>🇦🇷 Argentina</span>
+    <strong>1</strong>
+  </div>
+
+  <div class="match-minute">
+    74'
+  </div>
+
+  <div class="stadium">
+    🏟 MetLife Stadium
+  </div>
+
+</div>
+
+   <div class="card">
+
+  <h2>📅 Today's Matches</h2>
+
+  <div class="fixture-card">
+
+    <div class="fixture-time">
+      18:00
+    </div>
+
+    <div class="fixture-teams">
+      🇪🇸 Spain vs Brazil 🇧🇷
+    </div>
+
+    <div class="fixture-meta">
+      Quarter Final • MetLife Stadium
+    </div>
+
+  </div>
+
+  <div class="fixture-card">
+
+    <div class="fixture-time">
+      21:00
+    </div>
+
+    <div class="fixture-teams">
+      🇫🇷 France vs USA 🇺🇸
+    </div>
+
+    <div class="fixture-meta">
+      Quarter Final • SoFi Stadium
+    </div>
+
+  </div>
+
+  <div class="fixture-card">
+
+    <div class="fixture-time">
+      23:00
+    </div>
+
+    <div class="fixture-teams">
+      🇦🇷 Argentina vs Germany 🇩🇪
+    </div>
+
+    <div class="fixture-meta">
+      Quarter Final • AT&T Stadium
+    </div>
+
+  </div>
+
+</div>
+
+      <div class="card groups-card">
+
+  <h2>🏆 Groups</h2>
+
+  <div class="groups-grid">
+
+    <div class="group-tile">
+      <span>A</span>
+      <small>🇲🇽 Mexico</small>
+    </div>
+
+    <div class="group-tile">
+      <span>B</span>
+      <small>🇧🇷 Brazil</small>
+    </div>
+
+    <div class="group-tile">
+      <span>C</span>
+      <small>🇫🇷 France</small>
+    </div>
+
+    <div class="group-tile">
+      <span>D</span>
+      <small>🇦🇷 Argentina</small>
+    </div>
+
+    <div class="group-tile">
+      <span>E</span>
+      <small>🇪🇸 Spain</small>
+    </div>
+
+    <div class="group-tile">
+      <span>F</span>
+      <small>🇩🇪 Germany</small>
+    </div>
+
+    <div class="group-tile">
+      <span>G</span>
+      <small>🇯🇵 Japan</small>
+    </div>
+
+    <div class="group-tile">
+      <span>H</span>
+      <small>🇺🇸 USA</small>
+    </div>
+
+  </div>
+
+  <div class="card">
+
+  <h2>🥇 Top Scorers</h2>
+
+  <div class="scorer">
+    <span>🇫🇷 Mbappé</span>
+    <strong>6</strong>
+  </div>
+
+  <div class="scorer">
+    <span>🇳🇴 Haaland</span>
+    <strong>5</strong>
+  </div>
+
+  <div class="scorer">
+    <span>🇬🇧 Kane</span>
+    <strong>4</strong>
+  </div>
+
+</div>
+</div>
+<div class="card alerts-card">
+
+  <h2>🚨 Tournament Alerts</h2>
+
+  <div class="alert critical">
+    🩹 Mbappé doubtful for next match
+  </div>
+
+  <div class="alert important">
+    🚫 Bellingham suspended
+  </div>
+
+  <div class="alert info">
+    🏟 Host city security update
+  </div>
+
+</div>
+      <div class="card">
+        <h2>⚔️ Knockout Bracket</h2>
+
+        <p>
+          Round of 32 → Round of 16 → Quarter Finals
+          → Semi Finals → Final
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
+<div class="card">
+
+  <h2>📊 Tournament Progress</h2>
+
+  <div class="progress-row">
+    <span>Group Stage</span>
+    <div class="bar">
+      <div class="fill" style="width:100%"></div>
+    </div>
+  </div>
+
+  <div class="progress-row">
+    <span>Round of 32</span>
+    <div class="bar">
+      <div class="fill" style="width:75%"></div>
+    </div>
+  </div>
+
+  <div class="progress-row">
+    <span>Quarter Finals</span>
+    <div class="bar">
+      <div class="fill" style="width:25%"></div>
+    </div>
+  </div>
+
+</div>
