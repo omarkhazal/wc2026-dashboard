@@ -45,29 +45,36 @@ jobs:
             return arrays.length ? arrays.sort((a, b) => b.length - a.length)[0] : [];
           }
 
-          const output = {
-            generatedAt: new Date().toISOString(),
-            source: "worldcup26.ir",
-            games: [],
-            teams: [],
-            stadiums: [],
-            groups: []
-          };
+          async function main() {
+            const output = {
+              generatedAt: new Date().toISOString(),
+              source: "worldcup26.ir",
+              games: [],
+              teams: [],
+              stadiums: [],
+              groups: []
+            };
 
-          for (const endpoint of endpoints) {
-            try {
-              output[endpoint] = await fetchEndpoint(endpoint);
-              console.log(`${endpoint}: ${output[endpoint].length}`);
-            } catch (error) {
-              console.warn(`Failed to fetch ${endpoint}:`, error.message);
+            for (const endpoint of endpoints) {
+              try {
+                output[endpoint] = await fetchEndpoint(endpoint);
+                console.log(`${endpoint}: ${output[endpoint].length}`);
+              } catch (error) {
+                console.warn(`Failed to fetch ${endpoint}:`, error.message);
+              }
             }
+
+            if (!output.games.length) {
+              throw new Error("No games returned. Refusing to overwrite data/wc-data.json.");
+            }
+
+            fs.writeFileSync("data/wc-data.json", `${JSON.stringify(output, null, 2)}\n`);
           }
 
-          if (!output.games.length) {
-            throw new Error("No games returned. Refusing to overwrite data/wc-data.json.");
-          }
-
-          fs.writeFileSync("data/wc-data.json", `${JSON.stringify(output, null, 2)}\n`);
+          main().catch(error => {
+            console.error(error);
+            process.exit(1);
+          });
           NODE
 
       - name: Commit data update
