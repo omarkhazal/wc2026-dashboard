@@ -1,0 +1,139 @@
+// WC 2026 Dashboard Data Layer
+// Keep tournament data here so design/layout can change without rewriting everything.
+
+const WC_DATA = {
+  tournament: {
+    name: "FIFA World Cup 2026",
+    startDate: "2026-06-11T19:00:00",
+    finalDate: "2026-07-19T23:59:59",
+    hosts: [
+      { code: "CA", name: "Canada", flag: "🇨🇦" },
+      { code: "MX", name: "Mexico", flag: "🇲🇽" },
+      { code: "US", name: "USA", flag: "🇺🇸" }
+    ],
+    metrics: {
+      matches: 104,
+      teams: 48,
+      venues: 16,
+      groups: 12
+    }
+  },
+
+  groups: {
+    A: [
+      { code: "MEX", name: "Mexico", flag: "🇲🇽", p: 1, gd: "+2", pts: 3 },
+      { code: "KOR", name: "South Korea", flag: "🇰🇷", p: 1, gd: "+1", pts: 3 },
+      { code: "CZE", name: "Czechia", flag: "🇨🇿", p: 1, gd: "-1", pts: 0 },
+      { code: "RSA", name: "South Africa", flag: "🇿🇦", p: 1, gd: "-2", pts: 0 }
+    ],
+    B: [
+      { code: "SUI", name: "Switzerland", flag: "🇨🇭", p: 1, gd: "+1", pts: 3 },
+      { code: "CAN", name: "Canada", flag: "🇨🇦", p: 1, gd: "0", pts: 1 },
+      { code: "BIH", name: "Bosnia & Herz.", flag: "🇧🇦", p: 1, gd: "0", pts: 1 },
+      { code: "QAT", name: "Qatar", flag: "🇶🇦", p: 1, gd: "-1", pts: 0 }
+    ],
+    C: [
+      { code: "BRA", name: "Brazil", flag: "🇧🇷", p: 0, gd: "0", pts: 0 },
+      { code: "MAR", name: "Morocco", flag: "🇲🇦", p: 0, gd: "0", pts: 0 },
+      { code: "HTI", name: "Haiti", flag: "🇭🇹", p: 0, gd: "0", pts: 0 },
+      { code: "SCO", name: "Scotland", flag: "🏴", p: 0, gd: "0", pts: 0 }
+    ],
+    D: [
+      { code: "USA", name: "United States", flag: "🇺🇸", p: 1, gd: "+3", pts: 3 },
+      { code: "AUS", name: "Australia", flag: "🇦🇺", p: 0, gd: "0", pts: 0 },
+      { code: "TUR", name: "Türkiye", flag: "🇹🇷", p: 0, gd: "0", pts: 0 },
+      { code: "PAR", name: "Paraguay", flag: "🇵🇾", p: 1, gd: "-3", pts: 0 }
+    ],
+    E: [
+      { code: "GER", name: "Germany", flag: "🇩🇪", p: 0, gd: "0", pts: 0 },
+      { code: "CUW", name: "Curaçao", flag: "🇨🇼", p: 0, gd: "0", pts: 0 },
+      { code: "CIV", name: "Ivory Coast", flag: "🇨🇮", p: 0, gd: "0", pts: 0 },
+      { code: "ECU", name: "Ecuador", flag: "🇪🇨", p: 0, gd: "0", pts: 0 }
+    ],
+    F: [
+      { code: "NED", name: "Netherlands", flag: "🇳🇱", p: 0, gd: "0", pts: 0 },
+      { code: "JPN", name: "Japan", flag: "🇯🇵", p: 0, gd: "0", pts: 0 },
+      { code: "SWE", name: "Sweden", flag: "🇸🇪", p: 0, gd: "0", pts: 0 },
+      { code: "TUN", name: "Tunisia", flag: "🇹🇳", p: 0, gd: "0", pts: 0 }
+    ],
+    G: [
+      { code: "BEL", name: "Belgium", flag: "🇧🇪", p: 0, gd: "0", pts: 0 },
+      { code: "EGY", name: "Egypt", flag: "🇪🇬", p: 0, gd: "0", pts: 0 },
+      { code: "IRN", name: "Iran", flag: "🇮🇷", p: 0, gd: "0", pts: 0 },
+      { code: "NZL", name: "New Zealand", flag: "🇳🇿", p: 0, gd: "0", pts: 0 }
+    ],
+    H: [
+      { code: "ESP", name: "Spain", flag: "🇪🇸", p: 0, gd: "0", pts: 0 },
+      { code: "CPV", name: "Cape Verde", flag: "🇨🇻", p: 0, gd: "0", pts: 0 },
+      { code: "KSA", name: "Saudi Arabia", flag: "🇸🇦", p: 0, gd: "0", pts: 0 },
+      { code: "URU", name: "Uruguay", flag: "🇺🇾", p: 0, gd: "0", pts: 0 }
+    ],
+    I: [
+      { code: "FRA", name: "France", flag: "🇫🇷", p: 0, gd: "0", pts: 0 },
+      { code: "SEN", name: "Senegal", flag: "🇸🇳", p: 0, gd: "0", pts: 0 },
+      { code: "IRQ", name: "Iraq", flag: "🇮🇶", p: 0, gd: "0", pts: 0 },
+      { code: "NOR", name: "Norway", flag: "🇳🇴", p: 0, gd: "0", pts: 0 }
+    ],
+    J: [
+      { code: "ARG", name: "Argentina", flag: "🇦🇷", p: 0, gd: "0", pts: 0 },
+      { code: "DZA", name: "Algeria", flag: "🇩🇿", p: 0, gd: "0", pts: 0 },
+      { code: "AUT", name: "Austria", flag: "🇦🇹", p: 0, gd: "0", pts: 0 },
+      { code: "JOR", name: "Jordan", flag: "🇯🇴", p: 0, gd: "0", pts: 0 }
+    ],
+    K: [
+      { code: "POR", name: "Portugal", flag: "🇵🇹", p: 0, gd: "0", pts: 0 },
+      { code: "COD", name: "DR Congo", flag: "🇨🇩", p: 0, gd: "0", pts: 0 },
+      { code: "UZB", name: "Uzbekistan", flag: "🇺🇿", p: 0, gd: "0", pts: 0 },
+      { code: "COL", name: "Colombia", flag: "🇨🇴", p: 0, gd: "0", pts: 0 }
+    ],
+    L: [
+      { code: "ENG", name: "England", flag: "🏴", p: 0, gd: "0", pts: 0 },
+      { code: "CRO", name: "Croatia", flag: "🇭🇷", p: 0, gd: "0", pts: 0 },
+      { code: "GHA", name: "Ghana", flag: "🇬🇭", p: 0, gd: "0", pts: 0 },
+      { code: "PAN", name: "Panama", flag: "🇵🇦", p: 0, gd: "0", pts: 0 }
+    ]
+  },
+
+  liveMatches: [
+    {
+      group: "Group B",
+      minute: "LIVE",
+      home: { name: "Qatar", flag: "🇶🇦" },
+      away: { name: "Switzerland", flag: "🇨🇭" },
+      score: "0 - 1",
+      venue: "Kansas City"
+    }
+  ],
+
+  todayMatches: [
+    { time: "15:00", home: "🇶🇦 Qatar", away: "🇨🇭 Switzerland", group: "Group B" },
+    { time: "18:00", home: "🇧🇷 Brazil", away: "🇲🇦 Morocco", group: "Group C" },
+    { time: "21:00", home: "🇭🇹 Haiti", away: "🏴 Scotland", group: "Group C" }
+  ],
+
+  recentResults: [
+    { home: "🇲🇽 Mexico", score: "2 - 0", away: "🇿🇦 South Africa" },
+    { home: "🇰🇷 South Korea", score: "2 - 1", away: "🇨🇿 Czechia" },
+    { home: "🇺🇸 USA", score: "4 - 1", away: "🇵🇾 Paraguay" },
+    { home: "🇨🇦 Canada", score: "1 - 1", away: "🇧🇦 Bosnia & Herz." }
+  ],
+
+  scorers: [
+    { rank: 1, player: "🇺🇸 USA forward", goals: 2 },
+    { rank: 2, player: "🇲🇽 Mexico forward", goals: 1 },
+    { rank: 3, player: "🇰🇷 South Korea forward", goals: 1 },
+    { rank: 4, player: "🇨🇭 Switzerland forward", goals: 1 }
+  ],
+
+  alerts: [
+    { type: "info", text: "📊 Group stage underway" },
+    { type: "warning", text: "🌡 Match conditions vary across host cities" },
+    { type: "info", text: "🏟 Fixtures update automatically in data layer" }
+  ],
+
+  venues: [
+    { color: "green", name: "MetLife Stadium", city: "East Rutherford" },
+    { color: "orange", name: "AT&T Stadium", city: "Dallas" },
+    { color: "blue", name: "BC Place", city: "Vancouver" }
+  ]
+};
