@@ -2133,3 +2133,99 @@ body:not(.dashboard-ready) .detail-view {
 .date-card {
   margin-top: auto;
 }
+
+
+/* v37 API visibility and data-source audit */
+.data-panel {
+  grid-column: span 6;
+}
+
+.data-panel-body {
+  display: grid;
+  gap: 12px;
+}
+
+.data-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 13px;
+  background: rgba(255,255,255,.045);
+}
+
+.data-status-card.live {
+  border-color: rgba(66,211,146,.22);
+  background: rgba(66,211,146,.09);
+}
+
+.data-status-card.cache {
+  border-color: rgba(255,211,105,.24);
+  background: rgba(255,211,105,.09);
+}
+
+.data-status-card.fallback {
+  border-color: rgba(255,99,132,.22);
+  background: rgba(255,99,132,.08);
+}
+
+.data-status-card strong {
+  display: block;
+  color: #fff;
+}
+
+.data-status-card span,
+.data-status-card em {
+  color: #92a2d5;
+  font-size: .72rem;
+  font-style: normal;
+}
+
+.data-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.data-metrics span {
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  border-radius: 999px;
+  padding: 8px;
+  text-align: center;
+  color: #d9e2ff;
+  font-size: .72rem;
+}
+
+.data-metrics b {
+  color: #fff;
+}
+
+.data-coverage-list {
+  display: grid;
+  gap: 6px;
+}
+
+.data-coverage-list p {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  padding: 6px 0;
+  color: #b9c5e8;
+  font-size: .76rem;
+}
+
+.data-coverage-list strong {
+  color: #ffd369;
+  font-size: .7rem;
+}
+
+@media (max-width: 1200px) {
+  .data-panel {
+    grid-column: span 12;
+  }
+}

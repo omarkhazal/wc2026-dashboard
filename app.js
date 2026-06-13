@@ -228,6 +228,57 @@ function renderTournamentInfo() {
   });
 }
 
+function renderDataPanel() {
+  const panel = document.querySelector(".data-panel-body");
+  if (!panel) return;
+
+  const meta = WC_DATA.apiMeta || {
+    mode: "boot",
+    source: "loading",
+    games: (WC_DATA.allMatches || []).length || WC_DATA.tournament.metrics.matches,
+    teams: WC_DATA.tournament.metrics.teams,
+    stadiums: WC_DATA.tournament.metrics.venues,
+    cache: "waiting"
+  };
+
+  const modeLabel = {
+    live: "Live API",
+    cache: "Saved cache",
+    fallback: "Fallback",
+    boot: "Starting"
+  }[meta.mode] || meta.mode;
+
+  const statusClass = meta.mode === "live" ? "live" : meta.mode === "cache" ? "cache" : "fallback";
+  const syncLabel = meta.syncedAt
+    ? new Date(meta.syncedAt).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+    : "waiting";
+
+  panel.innerHTML = `
+    <div class="data-status-card ${statusClass}">
+      <div>
+        <strong>${modeLabel}</strong>
+        <span>${meta.source}</span>
+      </div>
+      <em>${syncLabel}</em>
+    </div>
+
+    <div class="data-metrics">
+      <span><b>${meta.games || 0}</b> games</span>
+      <span><b>${meta.teams || 0}</b> teams</span>
+      <span><b>${meta.stadiums || 0}</b> venues</span>
+    </div>
+
+    <div class="data-coverage-list">
+      <p><span>Matches</span><strong>${meta.mode === "live" || meta.mode === "cache" ? "Connected" : "Fallback"}</strong></p>
+      <p><span>Teams</span><strong>Connected</strong></p>
+      <p><span>Stadiums</span><strong>Connected</strong></p>
+      <p><span>Standings</span><strong>Local safe mode</strong></p>
+      <p><span>Lineups / events</span><strong>Pending</strong></p>
+      <p><span>Player stats</span><strong>Pending</strong></p>
+    </div>
+  `;
+}
+
 function renderFavoritePanel() {
   const panel = document.querySelector(".favorite-panel-body");
   const wrapper = document.querySelector(".favorite-panel");
@@ -1132,6 +1183,7 @@ async function bootDashboard() {
         renderAlerts();
         renderResults();
         renderTournamentInfo();
+        renderDataPanel();
         renderFavoritePanel();
         renderFavoriteTeamChip();
 

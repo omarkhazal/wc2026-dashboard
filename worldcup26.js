@@ -526,6 +526,16 @@
 
       const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
+      WC_DATA.apiMeta = {
+        mode: "live",
+        source: "worldcup26.ir",
+        syncedAt: new Date().toISOString(),
+        games: stats.games,
+        teams: stats.teams,
+        stadiums: stats.stadiums,
+        cache: "saved"
+      };
+
       setApiAlert(
         "info",
         `🟢 Live data synced at ${now}. Games: ${stats.games}. Teams: ${stats.teams}. Stadiums: ${stats.stadiums}. Last-good cache saved.`
@@ -541,6 +551,16 @@
       const cached = loadLastGoodData();
 
       if (cached) {
+        WC_DATA.apiMeta = {
+          mode: "cache",
+          source: "localStorage cache",
+          syncedAt: cached.savedAt,
+          games: cached.stats?.games || (WC_DATA.allMatches || []).length,
+          teams: cached.stats?.teams || 48,
+          stadiums: cached.stats?.stadiums || (WC_DATA.venues || []).length,
+          cache: "loaded"
+        };
+
         setApiAlert(
           "warning",
           `🟡 Live API unavailable, using saved data from ${cacheAgeLabel(cached.savedAt)}.`
@@ -554,6 +574,16 @@
           error: error.message || String(error)
         };
       }
+
+      WC_DATA.apiMeta = {
+        mode: "fallback",
+        source: "data.js fallback",
+        syncedAt: new Date().toISOString(),
+        games: (WC_DATA.allMatches || []).length || WC_DATA.tournament.metrics.matches,
+        teams: WC_DATA.tournament.metrics.teams,
+        stadiums: WC_DATA.tournament.metrics.venues,
+        cache: "empty"
+      };
 
       setApiAlert(
         "warning",
