@@ -572,8 +572,13 @@ function renderAlertsDetail() {
   `;
 }
 
-function bootDashboard() {
+async function bootDashboard() {
   updateTournamentStatus();
+
+  if (window.FootballDataOrg) {
+    await FootballDataOrg.load();
+  }
+
   renderLiveMatches();
   renderTodayMatches();
   renderGroupTabs();
@@ -588,5 +593,21 @@ function bootDashboard() {
   setTimeout(renderTwemoji, 100);
 }
 
+async function refreshDashboardData() {
+  if (window.FootballDataOrg) {
+    await FootballDataOrg.load();
+    renderLiveMatches();
+    renderTodayMatches();
+    renderStandings("A");
+    renderAllGroups();
+    renderScorers();
+    renderAlerts();
+    renderResults();
+    renderTournamentInfo();
+    setTimeout(renderTwemoji, 100);
+  }
+}
+
 bootDashboard();
 setInterval(updateTournamentStatus, 1000);
+setInterval(refreshDashboardData, 60000);

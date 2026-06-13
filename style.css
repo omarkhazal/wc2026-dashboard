@@ -797,3 +797,21 @@ html {
   align-items: center;
   gap: 6px;
 }
+
+
+/* v10 football-data.org integration */
+.api-token-button {
+  margin-left: 8px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  border-radius: 999px;
+  padding: 5px 9px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: .72rem;
+}
+
+.api-token-button:hover {
+  background: rgba(255,255,255,.18);
+}
