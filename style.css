@@ -1672,7 +1672,7 @@ body:not(.dashboard-ready) .detail-view {
 }
 
 
-/* v27 Favorite panel is optional: hidden until a favorite team is selected */
-.favorite-panel[style*="display: none"] {
+/* v28 Favorite Team panel hidden until a team is selected */
+.favorite-panel[hidden] {
   display: none !important;
 }

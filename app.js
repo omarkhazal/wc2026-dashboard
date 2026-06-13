@@ -233,24 +233,18 @@ function renderTournamentInfo() {
 
 function renderFavoritePanel() {
   const panel = document.querySelector(".favorite-panel-body");
-  if (!panel) return;
+  const wrapper = document.querySelector(".favorite-panel");
+  if (!panel || !wrapper) return;
 
   const favorite = getFavoriteTeam();
 
   if (!favorite) {
-    panel.innerHTML = `
-      <div class="empty-state favorite-empty">
-        <strong>No favorite team yet.</strong><br>
-        Pick a team to turn this into your personal World Cup command center.
-        <button data-favorite-choose type="button">Choose team</button>
-      </div>
-    `;
-
-    panel.querySelector("[data-favorite-choose]")?.addEventListener("click", () => {
-      window.WC_OPEN_VIEW?.("teams");
-    });
+    panel.innerHTML = "";
+    wrapper.hidden = true;
     return;
   }
+
+  wrapper.hidden = false;
 
   const matches = getTeamMatches(favorite);
   const next = matches.find(match => !match.isFinished) || matches[0];
