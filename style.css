@@ -1770,3 +1770,9 @@ body:not(.dashboard-ready) .detail-view {
 .detail-view.active {
   scroll-margin-top: 0;
 }
+
+
+/* v31 early navigation binding */
+.nav a {
+  user-select: none;
+}

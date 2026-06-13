@@ -860,6 +860,7 @@ async function refreshDashboardData() {
   }
 }
 
+setupNavigation();
 bootDashboard();
 setInterval(updateTournamentStatus, 1000);
 // API data loads once on page load. Auto-refresh disabled to prevent visual jumping.
