@@ -1764,3 +1764,9 @@ body:not(.dashboard-ready) .detail-view {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* v30 robust delegated navigation fix */
+.detail-view.active {
+  scroll-margin-top: 0;
+}
