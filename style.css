@@ -760,3 +760,40 @@ html {
     display: none;
   }
 }
+
+
+/* v9 clean-data empty states */
+.empty-state {
+  padding: 16px;
+  border: 1px dashed rgba(255,255,255,.16);
+  border-radius: 14px;
+  background: rgba(255,255,255,.035);
+  color: #b9c5e8;
+  font-size: .84rem;
+  line-height: 1.45;
+}
+
+.empty-state strong {
+  color: #fff;
+}
+
+.alert.info {
+  border-color: rgba(81, 166, 255, .25);
+  background: rgba(81, 166, 255, .08);
+}
+
+.fixture .status {
+  justify-self: end;
+  font-style: normal;
+  font-size: .68rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  color: #d9e2ff;
+}
+
+.venue-list p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

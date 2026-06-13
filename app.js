@@ -40,6 +40,16 @@ function renderLiveMatches() {
   const container = document.querySelector(".live-games");
   if (!container) return;
 
+  if (!WC_DATA.liveMatches.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <strong>No live matches right now.</strong><br>
+        This panel is ready for the live-score API connection.
+      </div>
+    `;
+    return;
+  }
+
   container.innerHTML = WC_DATA.liveMatches.map(match => `
     <div class="live-game">
       <div class="game-meta">
@@ -70,7 +80,17 @@ function renderTodayMatches() {
   const panel = document.querySelector(".today-panel");
   if (!panel) return;
 
-  panel.querySelectorAll(".fixture").forEach(item => item.remove());
+  panel.querySelectorAll(".fixture, .empty-state").forEach(item => item.remove());
+
+  if (!WC_DATA.todayMatches.length) {
+    panel.insertAdjacentHTML("beforeend", `
+      <div class="empty-state">
+        <strong>No fixtures loaded for today.</strong><br>
+        The schedule view is ready for the next fixture-data pass.
+      </div>
+    `);
+    return;
+  }
 
   WC_DATA.todayMatches.forEach(match => {
     panel.insertAdjacentHTML("beforeend", `
@@ -79,7 +99,7 @@ function renderTodayMatches() {
         <span>${match.home}</span>
         <strong>vs</strong>
         <span>${match.away}</span>
-        <em>${match.group}</em>
+        <em class="status">${match.status || match.group}</em>
       </div>
     `);
   });
@@ -138,7 +158,17 @@ function renderScorers() {
   const panel = document.querySelector(".scorers-panel");
   if (!panel) return;
 
-  panel.querySelectorAll(".scorer-row").forEach(item => item.remove());
+  panel.querySelectorAll(".scorer-row, .empty-state").forEach(item => item.remove());
+
+  if (!WC_DATA.scorers.length) {
+    panel.insertAdjacentHTML("beforeend", `
+      <div class="empty-state">
+        <strong>Top scorers will appear here.</strong><br>
+        No fake player stats are shown in the clean-data version.
+      </div>
+    `);
+    return;
+  }
 
   WC_DATA.scorers.forEach(player => {
     panel.insertAdjacentHTML("beforeend", `
@@ -350,24 +380,40 @@ function renderDetailContent(view) {
 }
 
 function renderLiveDetail() {
-  const live = WC_DATA.liveMatches.length
-    ? WC_DATA.liveMatches.map(match => `
-      <div class="view-card wide">
-        <h3><span class="view-pill">${match.group}</span> ${match.minute}</h3>
-        <div class="score-row">
-          <div><div class="flag">${match.home.flag}</div><p>${match.home.name}</p></div>
-          <div class="score">${match.score}</div>
-          <div><div class="flag">${match.away.flag}</div><p>${match.away.name}</p></div>
-        </div>
-        <p class="venue">📍 ${match.venue}</p>
+  if (!WC_DATA.liveMatches.length) {
+    return `
+      <div class="view-card full">
+        <h3>No live matches right now</h3>
+        <p>This is intentional in v9. We removed fake live scores and prepared this view for the live-score API connection.</p>
       </div>
-    `).join("")
-    : `<div class="view-card full"><h3>No live matches</h3><p>No matches are currently live.</p></div>`;
+    `;
+  }
+
+  const live = WC_DATA.liveMatches.map(match => `
+    <div class="view-card wide">
+      <h3><span class="view-pill">${match.group}</span> ${match.minute}</h3>
+      <div class="score-row">
+        <div><div class="flag">${match.home.flag}</div><p>${match.home.name}</p></div>
+        <div class="score">${match.score}</div>
+        <div><div class="flag">${match.away.flag}</div><p>${match.away.name}</p></div>
+      </div>
+      <p class="venue">📍 ${match.venue}</p>
+    </div>
+  `).join("");
 
   return `<div class="view-grid">${live}</div>`;
 }
 
 function renderTodayDetail() {
+  if (!WC_DATA.todayMatches.length) {
+    return `
+      <div class="view-card full">
+        <h3>No fixtures loaded</h3>
+        <p>The fixture list is ready for the next fixture-data pass.</p>
+      </div>
+    `;
+  }
+
   return `
     <div class="view-card full">
       <h3>Match schedule</h3>
@@ -377,7 +423,7 @@ function renderTodayDetail() {
           <span>${match.home}</span>
           <strong>vs</strong>
           <span>${match.away}</span>
-          <em>${match.group}</em>
+          <em>${match.status || match.group}</em>
         </div>
       `).join("")}
     </div>
@@ -463,22 +509,33 @@ function renderBracketDetail() {
 }
 
 function renderStatsDetail() {
+  const scorersBlock = WC_DATA.scorers.length
+    ? `
+      <table class="view-table">
+        <thead><tr><th>#</th><th>Player</th><th>Goals</th></tr></thead>
+        <tbody>
+          ${WC_DATA.scorers.map(player => `
+            <tr>
+              <td>${player.rank}</td>
+              <td>${player.player}</td>
+              <td><strong>${player.goals}</strong></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    `
+    : `
+      <div class="empty-state">
+        <strong>No scorer table yet.</strong><br>
+        This avoids showing fake Golden Boot data before a live/stat feed is connected.
+      </div>
+    `;
+
   return `
     <div class="view-grid">
       <div class="view-card wide">
         <h3>Top scorers</h3>
-        <table class="view-table">
-          <thead><tr><th>#</th><th>Player</th><th>Goals</th></tr></thead>
-          <tbody>
-            ${WC_DATA.scorers.map(player => `
-              <tr>
-                <td>${player.rank}</td>
-                <td>${player.player}</td>
-                <td><strong>${player.goals}</strong></td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
+        ${scorersBlock}
       </div>
       <div class="view-card wide">
         <h3>Tournament totals</h3>
@@ -494,13 +551,10 @@ function renderVenuesDetail() {
       ${WC_DATA.venues.map(venue => `
         <div class="view-card">
           <h3>${venue.name}</h3>
-          <p>${venue.city}</p>
+          <p>${venue.city}, ${venue.country}</p>
+          <p>${venue.matches ? `${venue.matches} matches listed` : "Match count pending in data layer"}</p>
         </div>
       `).join("")}
-      <div class="view-card full">
-        <h3>Venue data note</h3>
-        <p>This page is now a dedicated venue view. The next data pass can expand it to all 16 venues with host city details.</p>
-      </div>
     </div>
   `;
 }

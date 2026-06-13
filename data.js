@@ -1,5 +1,8 @@
 // WC 2026 Dashboard Data Layer
-// Keep tournament data here so design/layout can change without rewriting everything.
+// v9 clean-data pass:
+// - Removes fake scorers/injuries
+// - Keeps real tournament structure in one place
+// - Prepares the app for a future live API connection
 
 const WC_DATA = {
   tournament: {
@@ -27,10 +30,10 @@ const WC_DATA = {
       { code: "RSA", name: "South Africa", flag: "🇿🇦", p: 1, gd: "-2", pts: 0 }
     ],
     B: [
-      { code: "SUI", name: "Switzerland", flag: "🇨🇭", p: 1, gd: "+1", pts: 3 },
       { code: "CAN", name: "Canada", flag: "🇨🇦", p: 1, gd: "0", pts: 1 },
-      { code: "BIH", name: "Bosnia & Herz.", flag: "🇧🇦", p: 1, gd: "0", pts: 1 },
-      { code: "QAT", name: "Qatar", flag: "🇶🇦", p: 1, gd: "-1", pts: 0 }
+      { code: "BIH", name: "Bosnia & Herzegovina", flag: "🇧🇦", p: 1, gd: "0", pts: 1 },
+      { code: "QAT", name: "Qatar", flag: "🇶🇦", p: 1, gd: "0", pts: 1 },
+      { code: "SUI", name: "Switzerland", flag: "🇨🇭", p: 1, gd: "0", pts: 1 }
     ],
     C: [
       { code: "BRA", name: "Brazil", flag: "🇧🇷", p: 0, gd: "0", pts: 0 },
@@ -94,46 +97,46 @@ const WC_DATA = {
     ]
   },
 
-  liveMatches: [
-    {
-      group: "Group B",
-      minute: "LIVE",
-      home: { name: "Qatar", flag: "🇶🇦" },
-      away: { name: "Switzerland", flag: "🇨🇭" },
-      score: "0 - 1",
-      venue: "Kansas City"
-    }
-  ],
+  liveMatches: [],
 
   todayMatches: [
-    { time: "15:00", home: "🇶🇦 Qatar", away: "🇨🇭 Switzerland", group: "Group B" },
-    { time: "18:00", home: "🇧🇷 Brazil", away: "🇲🇦 Morocco", group: "Group C" },
-    { time: "21:00", home: "🇭🇹 Haiti", away: "🏴 Scotland", group: "Group C" }
+    { time: "15:00", home: "🇶🇦 Qatar", away: "🇨🇭 Switzerland", group: "Group B", status: "Complete" },
+    { time: "18:00", home: "🇧🇷 Brazil", away: "🇲🇦 Morocco", group: "Group C", status: "Upcoming" },
+    { time: "21:00", home: "🇭🇹 Haiti", away: "🏴 Scotland", group: "Group C", status: "Upcoming" }
   ],
 
   recentResults: [
     { home: "🇲🇽 Mexico", score: "2 - 0", away: "🇿🇦 South Africa" },
     { home: "🇰🇷 South Korea", score: "2 - 1", away: "🇨🇿 Czechia" },
-    { home: "🇺🇸 USA", score: "4 - 1", away: "🇵🇾 Paraguay" },
-    { home: "🇨🇦 Canada", score: "1 - 1", away: "🇧🇦 Bosnia & Herz." }
+    { home: "🇨🇦 Canada", score: "1 - 1", away: "🇧🇦 Bosnia & Herzegovina" },
+    { home: "🇺🇸 United States", score: "4 - 1", away: "🇵🇾 Paraguay" },
+    { home: "🇶🇦 Qatar", score: "1 - 1", away: "🇨🇭 Switzerland" }
   ],
 
-  scorers: [
-    { rank: 1, player: "🇺🇸 USA forward", goals: 2 },
-    { rank: 2, player: "🇲🇽 Mexico forward", goals: 1 },
-    { rank: 3, player: "🇰🇷 South Korea forward", goals: 1 },
-    { rank: 4, player: "🇨🇭 Switzerland forward", goals: 1 }
-  ],
+  scorers: [],
 
   alerts: [
-    { type: "info", text: "📊 Group stage underway" },
-    { type: "warning", text: "🌡 Match conditions vary across host cities" },
-    { type: "info", text: "🏟 Fixtures update automatically in data layer" }
+    { type: "info", text: "📌 v9 clean-data pass: fake scorers and fake injury alerts removed." },
+    { type: "info", text: "🔌 Live score API is not connected yet. Current live panel intentionally shows an empty state." },
+    { type: "info", text: "🏆 Knockout bracket unlocks after group-stage qualification is known." }
   ],
 
   venues: [
-    { color: "green", name: "MetLife Stadium", city: "East Rutherford" },
-    { color: "orange", name: "AT&T Stadium", city: "Dallas" },
-    { color: "blue", name: "BC Place", city: "Vancouver" }
+    { name: "Atlanta Stadium", city: "Atlanta", country: "USA", matches: 8 },
+    { name: "Boston Stadium", city: "Boston", country: "USA", matches: 7 },
+    { name: "Dallas Stadium", city: "Dallas", country: "USA", matches: 9 },
+    { name: "Guadalajara Stadium", city: "Guadalajara", country: "Mexico", matches: null },
+    { name: "Houston Stadium", city: "Houston", country: "USA", matches: null },
+    { name: "Kansas City Stadium", city: "Kansas City", country: "USA", matches: null },
+    { name: "Los Angeles Stadium", city: "Los Angeles", country: "USA", matches: null },
+    { name: "Mexico City Stadium", city: "Mexico City", country: "Mexico", matches: null },
+    { name: "Miami Stadium", city: "Miami", country: "USA", matches: null },
+    { name: "Monterrey Stadium", city: "Monterrey", country: "Mexico", matches: null },
+    { name: "New York New Jersey Stadium", city: "New York / New Jersey", country: "USA", matches: null },
+    { name: "Philadelphia Stadium", city: "Philadelphia", country: "USA", matches: null },
+    { name: "San Francisco Bay Area Stadium", city: "San Francisco Bay Area", country: "USA", matches: null },
+    { name: "Seattle Stadium", city: "Seattle", country: "USA", matches: null },
+    { name: "Toronto Stadium", city: "Toronto", country: "Canada", matches: null },
+    { name: "Vancouver Stadium", city: "Vancouver", country: "Canada", matches: null }
   ]
 };
