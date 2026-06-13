@@ -310,6 +310,48 @@ function getAllTeams() {
   );
 }
 
+const FAVORITE_TEAM_KEY = "wc2026FavoriteTeamCode";
+
+function getFavoriteTeam() {
+  try {
+    const code = localStorage.getItem(FAVORITE_TEAM_KEY);
+    return getAllTeams().find(team => team.code === code) || null;
+  } catch {
+    return null;
+  }
+}
+
+function setFavoriteTeam(code) {
+  if (!code) return null;
+  try {
+    localStorage.setItem(FAVORITE_TEAM_KEY, code);
+  } catch {}
+  renderFavoriteTeamChip();
+  if (typeof renderFavoritePanel === "function") renderFavoritePanel();
+  return getFavoriteTeam();
+}
+
+function renderFavoriteTeamChip() {
+  const chip = document.getElementById("favorite-chip");
+  if (!chip) return;
+
+  const favorite = getFavoriteTeam();
+  if (!favorite) {
+    chip.innerHTML = "☆ Pick favorite team";
+    chip.classList.remove("has-favorite");
+    return;
+  }
+
+  chip.innerHTML = `${favorite.flag} ${favorite.name}`;
+  chip.classList.add("has-favorite");
+}
+
+function getSelectedTeam() {
+  const teams = getAllTeams();
+  const selectedCode = window.WC_SELECTED_TEAM_CODE;
+  return teams.find(team => team.code === selectedCode) || getFavoriteTeam() || teams[0] || null;
+}
+
 function getAllMatches() {
   if (Array.isArray(WC_DATA.allMatches) && WC_DATA.allMatches.length) {
     return WC_DATA.allMatches;
@@ -322,7 +364,7 @@ function getAllMatches() {
     away: match.away,
     group: match.group || "World Cup",
     status: match.status || "Upcoming",
-    score: match.status && match.status.includes("-") ? match.status : "vs",
+    score: match.status && String(match.status).includes("-") ? match.status : "vs",
     venue: "",
     isLive: false,
     isFinished: false
@@ -344,6 +386,23 @@ function getAllMatches() {
   return [...upcoming, ...recent];
 }
 
+function getTeamMatches(team) {
+  if (!team) return [];
+  const name = String(team.name || "").toLowerCase();
+  const code = String(team.code || "").toLowerCase();
+
+  return getAllMatches().filter(match => {
+    const text = [
+      match.home,
+      match.away,
+      match.homeName,
+      match.awayName
+    ].filter(Boolean).join(" ").toLowerCase();
+
+    return text.includes(name) || text.includes(code);
+  });
+}
+
 function getFeaturedMatch() {
   const matches = getAllMatches();
   return matches.find(match => match.isLive) ||
@@ -352,6 +411,51 @@ function getFeaturedMatch() {
     null;
 }
 
+function getSelectedMatch() {
+  const matches = getAllMatches();
+  const selected = Number(window.WC_SELECTED_MATCH_INDEX);
+
+  if (Number.isInteger(selected) && matches[selected]) {
+    return { match: matches[selected], index: selected };
+  }
+
+  const fallback = getFeaturedMatch();
+  return { match: fallback, index: fallback ? matches.indexOf(fallback) : -1 };
+}
+
+function attachMatchOpeners(root, openView) {
+  root.querySelectorAll("[data-match-index]").forEach(button => {
+    button.addEventListener("click", () => {
+      window.WC_SELECTED_MATCH_INDEX = Number(button.dataset.matchIndex);
+      openView("matchcenter");
+    });
+  });
+}
+
+function attachTeamOpeners(root, openView) {
+  root.querySelectorAll("[data-team-code]").forEach(button => {
+    button.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      window.WC_SELECTED_TEAM_CODE = button.dataset.teamCode;
+      openView("teamcenter");
+    });
+  });
+}
+
+function attachFavoriteButtons(root, rerender) {
+  root.querySelectorAll("[data-favorite-team]").forEach(button => {
+    button.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      setFavoriteTeam(button.dataset.favoriteTeam);
+      if (typeof rerender === "function") rerender();
+    });
+  });
+}
+
+
+
 function renderStatusPill(status) {
   const value = String(status || "Upcoming");
   const kind = value.includes("LIVE") ? "live" : value.includes("FT") ? "done" : "upcoming";
@@ -359,7 +463,6 @@ function renderStatusPill(status) {
 }
 
 function setupNavigation() {
-  const links = document.querySelectorAll(".nav a[data-view], .panel-header a[href^='#']");
   const topRow = document.querySelector(".top-row");
   const dashboardGrid = document.querySelector(".dashboard-grid");
   const detailView = document.getElementById("detail-view");
@@ -371,6 +474,7 @@ function setupNavigation() {
     "#groups": "groups",
     "#bracket": "bracket",
     "#teams": "teams",
+    "#teamcenter": "teamcenter",
     "#players": "players",
     "#stats": "players",
     "#venues": "venues",
@@ -395,11 +499,11 @@ function setupNavigation() {
     }
     setActive("dashboard");
     if (main) main.scrollTo({ top: 0, behavior: "smooth" });
-    history.replaceState(null, "", "#dashboard");
+    if (location.hash !== "#dashboard") history.replaceState(null, "", "#dashboard");
   }
 
   function openView(view) {
-    if (view === "dashboard") {
+    if (!view || view === "dashboard") {
       openDashboard();
       return;
     }
@@ -408,7 +512,19 @@ function setupNavigation() {
     if (dashboardGrid) dashboardGrid.style.display = "none";
     if (!detailView) return;
 
-    detailView.innerHTML = renderDetailView(view);
+    try {
+      detailView.innerHTML = renderDetailView(view);
+    } catch (error) {
+      console.error(`Failed to open ${view}:`, error);
+      detailView.innerHTML = `
+        <div class="view-header">
+          <div><h2>Page error</h2><p>${view} could not render.</p></div>
+          <button class="view-back" type="button">← Dashboard</button>
+        </div>
+        <div class="view-card full"><h3>Open the browser console for details.</h3></div>
+      `;
+    }
+
     detailView.classList.add("active");
     setActive(view);
 
@@ -423,44 +539,62 @@ function setupNavigation() {
       });
     });
 
+    attachMatchOpeners(detailView, openView);
+    attachTeamOpeners(detailView, openView);
+    attachFavoriteButtons(detailView, () => openView(view));
+
     const backButton = detailView.querySelector(".view-back");
     if (backButton) backButton.addEventListener("click", openDashboard);
 
     if (main) main.scrollTo({ top: 0, behavior: "smooth" });
-    history.replaceState(null, "", `#${view}`);
+    if (location.hash !== `#${view}`) history.replaceState(null, "", `#${view}`);
     setTimeout(renderTwemoji, 50);
   }
 
   window.WC_OPEN_VIEW = openView;
 
-  links.forEach(link => {
-    link.addEventListener("click", event => {
-      const href = link.getAttribute("href");
-      const view = link.dataset.view || routeMap[href];
+  if (!window.WC_NAVIGATION_DELEGATE_BOUND) {
+    window.WC_NAVIGATION_DELEGATE_BOUND = true;
+
+    document.addEventListener("click", event => {
+      const trigger = event.target.closest(".nav a[data-view], .panel-header a[href^='#'], [data-view-target]");
+      if (!trigger) return;
+
+      const href = trigger.getAttribute("href");
+      const view = trigger.dataset.view || trigger.dataset.viewTarget || routeMap[href];
       if (!view) return;
+
       event.preventDefault();
       openView(view);
+    }, true);
+
+    document.addEventListener("keydown", event => {
+      const trigger = event.target.closest?.("[data-view-target]");
+      if (!trigger) return;
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openView(trigger.dataset.viewTarget);
     });
-  });
+
+    window.addEventListener("hashchange", () => {
+      const view = routeMap[location.hash];
+      if (view) openView(view);
+    });
+  }
 
   const favoriteChip = document.getElementById("favorite-chip");
-  if (favoriteChip) {
+  if (favoriteChip && !favoriteChip.dataset.bound) {
+    favoriteChip.dataset.bound = "true";
     favoriteChip.addEventListener("click", () => {
       const favorite = getFavoriteTeam();
-      if (!favorite) {
-        openView("teams");
-        return;
-      }
-
+      if (!favorite) return openView("teams");
       window.WC_SELECTED_TEAM_CODE = favorite.code;
       openView("teamcenter");
     });
   }
 
-  const startingHash = window.location.hash.replace("#", "");
-  if (startingHash && routeMap[`#${startingHash}`] && startingHash !== "dashboard") {
-    openView(routeMap[`#${startingHash}`]);
-  }
+  const startingView = routeMap[location.hash];
+  if (startingView && startingView !== "dashboard") openView(startingView);
 }
 
 function renderDetailView(view) {
@@ -469,7 +603,8 @@ function renderDetailView(view) {
     matchcenter: ["Match Center", "Focused match hub inspired by SofaScore/FotMob match pages."],
     groups: ["Groups", "All 12 groups with compact tables and clickable group cards."],
     bracket: ["Bracket", "Expanded knockout map inspired by tournament bracket pages."],
-    teams: ["Teams", "Team hub for all 48 teams, grouped and sortable later."],
+    teams: ["Teams", "Team hub for all 48 teams with clickable team cards."],
+    teamcenter: ["Team Center", "Focused team page with group table, fixtures, results, and team status."],
     players: ["Stats", "Tournament metrics and player-stat modules, without fake data."],
     venues: ["Venues", "Host city and stadium overview for the 16 World Cup venues."],
     alerts: ["Alerts", "Forza-style high-signal tournament updates only."]
@@ -502,6 +637,8 @@ function renderDetailContent(view) {
       return renderBracketPage();
     case "teams":
       return renderTeamsPage();
+    case "teamcenter":
+      return renderTeamCenterPage();
     case "players":
       return renderPlayersPage();
     case "venues":
@@ -630,21 +767,22 @@ function renderGroupsPage() {
 
 function renderTeamsPage() {
   const teams = getAllTeams();
+  const favorite = getFavoriteTeam();
 
   return `
-    <div class="view-toolbar">
+    <div class="view-toolbar team-toolbar">
       <span>${teams.length} teams</span>
       <span>12 groups</span>
-      <span>Click team pages later</span>
+      <span>Click a team for Team Center</span>
     </div>
     <div class="team-grid-page">
       ${teams.map(team => `
-        <div class="team-card-page">
+        <button class="team-card-page clickable-team-card ${favorite?.code === team.code ? "favorite-team-card" : ""}" data-team-code="${team.code}" type="button">
           <div class="team-card-main">
             <span>${team.flag}</span>
             <div>
               <strong>${team.name}</strong>
-              <small>Group ${team.group} · ${team.code}${getFavoriteTeam()?.code === team.code ? " · Favorite" : ""}</small>
+              <small>Group ${team.group} · ${team.code}${favorite?.code === team.code ? " · Favorite" : ""}</small>
             </div>
           </div>
           <div class="team-card-stats">
@@ -652,8 +790,96 @@ function renderTeamsPage() {
             <span>GD ${team.gd}</span>
             <span>PTS ${team.pts}</span>
           </div>
-        </div>
+        </button>
       `).join("")}
+    </div>
+  `;
+}
+
+function renderTeamCenterPage() {
+  const team = getSelectedTeam();
+
+  if (!team) {
+    return `
+      <div class="view-card full">
+        <h3>No team selected</h3>
+        <p>Open the Teams page and choose a team.</p>
+      </div>
+    `;
+  }
+
+  const teamMatches = getTeamMatches(team);
+  const groupRows = WC_DATA.groups[team.group] || [];
+  const favorite = getFavoriteTeam();
+
+  return `
+    <div class="team-center-hero">
+      <div class="team-center-main">
+        <span>${team.flag}</span>
+        <div>
+          <h2>${team.name}</h2>
+          <p>Group ${team.group} · ${team.code}</p>
+        </div>
+      </div>
+      <div class="team-center-actions">
+        <button class="${favorite?.code === team.code ? "is-favorite" : ""}" data-favorite-team="${team.code}" type="button">
+          ${favorite?.code === team.code ? "★ Favorite team" : "☆ Set favorite"}
+        </button>
+        <div class="team-center-record">
+          <div><strong>${team.p}</strong><span>Played</span></div>
+          <div><strong>${team.gd}</strong><span>GD</span></div>
+          <div><strong>${team.pts}</strong><span>Points</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="match-subnav">
+      <button data-view-target="teams" type="button">← All teams</button>
+      <button data-view-target="groups" type="button">Group ${team.group}</button>
+      <button data-view-target="matches" type="button">All matches →</button>
+    </div>
+
+    <div class="match-center-grid">
+      <div class="view-card wide">
+        <h3>Group ${team.group} table</h3>
+        <table class="view-table">
+          <thead><tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
+          <tbody>
+            ${groupRows.map((row, index) => `
+              <tr class="${row.code === team.code ? "highlight-row" : ""}">
+                <td>${index + 1}</td>
+                <td>${row.flag} ${row.name}</td>
+                <td>${row.p}</td>
+                <td>${row.gd}</td>
+                <td><strong>${row.pts}</strong></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="view-card wide">
+        <h3>Team matches</h3>
+        ${teamMatches.length ? teamMatches.slice(0, 8).map(match => `
+          <button class="team-match-row" data-match-index="${getAllMatches().indexOf(match)}" type="button">
+            <span>${match.dateLabel || "TBD"} · ${match.time || "--:--"}</span>
+            <strong>${match.home} ${match.score || "vs"} ${match.away}</strong>
+            <em>${match.status || match.group}</em>
+          </button>
+        `).join("") : `
+          <div class="empty-state">No team-specific fixtures matched yet. This will fill as normalized match names stabilize.</div>
+        `}
+      </div>
+
+      <div class="view-card wide">
+        <h3>Qualification watch</h3>
+        <p>This will later show required result, advancement probability, and elimination scenarios for ${team.name}.</p>
+      </div>
+
+      <div class="view-card wide">
+        <h3>Team alerts</h3>
+        <p>No high-signal team alerts right now.</p>
+      </div>
     </div>
   `;
 }
