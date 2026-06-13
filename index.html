@@ -1,156 +1,126 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <title>World Cup 2026 Dashboard</title>
-  <link rel="stylesheet" href="style.css?v=18" />
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="no-cache, no-store, must-revalidate" http-equiv="Cache-Control"/>
+<meta content="no-cache" http-equiv="Pragma"/>
+<meta content="0" http-equiv="Expires"/>
+<title>World Cup 2026 Dashboard</title>
+<link href="style.css?v=19" rel="stylesheet"/>
 </head>
 <body>
 <div class="app">
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="trophy">🏆</div>
-      <h1>FIFA WORLD CUP</h1>
-      <div class="year">2026</div>
-      <p>CANADA • MEXICO • USA</p>
-    </div>
-    <nav class="nav">
-      <a class="active" href="#dashboard" data-view="dashboard">⌂ Dashboard</a>
-      <a href="#live" data-view="live">🔴 Live Matches</a>
-      <a href="#today" data-view="today">📅 Today</a>
-      <a href="#groups" data-view="groups">🏟 Groups</a>
-      <a href="#teams" data-view="teams">🛡 Teams</a>
-      <a href="#bracket" data-view="bracket">⚔ Bracket</a>
-      <a href="#stats" data-view="stats">📊 Stats</a>
-      <a href="#venues" data-view="venues">🗺 Venues</a>
-      <a href="#alerts" data-view="alerts">🚨 Alerts</a>
-    </nav>
-    <div class="date-card">
-      <h3>Tournament Dates</h3>
-      <p>11 June 2026</p><span>to</span><p>19 July 2026</p>
-    </div>
-  </aside>
-  <main class="main">
-    <section class="top-row" id="dashboard">
-      <div class="hero-card">
-        <div class="hero-trophy">🏆</div>
-        <div class="hero-center">
-          <h2 id="hero-label">TOURNAMENT STATUS</h2>
-          <div class="countdown" id="countdown">Loading <span>status</span></div>
-          <p id="hero-subtitle">11 JUNE — 19 JULY 2026</p>
-        </div>
-        <div class="host-flags">
-          <div>🇨🇦 <span>Canada</span></div>
-          <div>🇲🇽 <span>Mexico</span></div>
-          <div>🇺🇸 <span>USA</span></div>
-        </div>
-      </div>
-      <div class="kpi blue"><span>⚽</span><h3>Matches</h3><strong>104</strong><p>Total</p></div>
-      <div class="kpi gold"><span>👥</span><h3>Teams</h3><strong>48</strong><p>Qualified</p></div>
-      <div class="kpi green"><span>🏟</span><h3>Venues</h3><strong>16</strong><p>Stadiums</p></div>
-      <div class="kpi purple"><span>🧩</span><h3>Groups</h3><strong>12</strong><p>Groups</p></div>
-    </section>
+<aside class="sidebar">
+<div class="brand">
+<div class="trophy">🏆</div>
+<h1>FIFA WORLD CUP</h1>
+<div class="year">2026</div>
+<p>CANADA • MEXICO • USA • v19</p>
+</div>
+<nav class="nav">
+<a class="active" data-view="dashboard" href="#dashboard">⌂ Dashboard</a>
+<a data-view="live" href="#live">🔴 Live Matches</a>
+<a data-view="today" href="#today">📅 Today</a>
+<a data-view="groups" href="#groups">🏟 Groups</a>
+<a data-view="teams" href="#teams">🛡 Teams</a>
+<a data-view="bracket" href="#bracket">⚔ Bracket</a>
+<a data-view="stats" href="#stats">📊 Stats</a>
+<a data-view="venues" href="#venues">🗺 Venues</a>
+<a data-view="alerts" href="#alerts">🚨 Alerts</a>
+</nav>
+<div class="date-card">
+<h3>Tournament Dates</h3>
+<p>11 June 2026</p><span>to</span><p>19 July 2026</p>
+</div>
+</aside>
+<main class="main">
+<section class="top-row" id="dashboard">
+<div class="hero-card">
+<div class="hero-trophy">🏆</div>
+<div class="hero-center">
+<h2 id="hero-label">TOURNAMENT STATUS</h2>
+<div class="countdown" id="countdown">Loading <span>status</span></div>
+<p id="hero-subtitle">11 JUNE — 19 JULY 2026</p>
+</div>
+<div class="host-flags">
+<div>🇨🇦 <span>Canada</span></div>
+<div>🇲🇽 <span>Mexico</span></div>
+<div>🇺🇸 <span>USA</span></div>
+</div>
+</div>
+<div class="kpi blue"><span>⚽</span><h3>Matches</h3><strong>104</strong><p>Total</p></div>
+<div class="kpi gold"><span>👥</span><h3>Teams</h3><strong>48</strong><p>Qualified</p></div>
+<div class="kpi green"><span>🏟</span><h3>Venues</h3><strong>16</strong><p>Stadiums</p></div>
+<div class="kpi purple"><span>🧩</span><h3>Groups</h3><strong>12</strong><p>Groups</p></div>
+</section>
+<section class="dashboard-grid" id="dashboard-grid">
+<div class="panel live-panel" id="live">
+<div class="panel-header"><h2><span class="red-dot"></span> Live Matches</h2><a href="#live">View all</a></div>
+<div class="live-games"></div>
+</div>
+<div class="panel today-panel" id="today">
+<div class="panel-header"><h2>📅 Today's Matches</h2><a href="#today">View all</a></div>
 
-    <section class="dashboard-grid" id="dashboard-grid">
-      <div class="panel live-panel" id="live">
-        <div class="panel-header"><h2><span class="red-dot"></span> Live Matches</h2><a href="#live">View all</a></div>
-        <div class="live-games">
-          <div class="live-game"><div class="game-meta"><span>Group F</span><strong>65'</strong></div><div class="score-row"><div><div class="flag">🇲🇽</div><p>Mexico</p></div><div class="score">1 - 0</div><div><div class="flag">🇩🇰</div><p>Denmark</p></div></div><div class="venue">📍 AT&T Stadium, Dallas</div></div>
-          <div class="live-game"><div class="game-meta"><span>Group E</span><strong>78'</strong></div><div class="score-row"><div><div class="flag">🇯🇵</div><p>Japan</p></div><div class="score">2 - 1</div><div><div class="flag">🇺🇾</div><p>Uruguay</p></div></div><div class="venue">📍 State Farm Stadium, Phoenix</div></div>
-        </div>
-      </div>
 
-      <div class="panel today-panel" id="today">
-        <div class="panel-header"><h2>📅 Today's Matches</h2><a href="#today">View all</a></div>
-        <div class="fixture"><span class="time">14:00</span><span>🇪🇸 Spain</span><strong>vs</strong><span>🇧🇷 Brazil</span><em>Group C</em></div>
-        <div class="fixture"><span class="time">17:00</span><span>🇫🇷 France</span><strong>vs</strong><span>🇺🇸 USA</span><em>Group D</em></div>
-        <div class="fixture"><span class="time">20:00</span><span>🇦🇷 Argentina</span><strong>vs</strong><span>🇩🇪 Germany</span><em>Group I</em></div>
-      </div>
 
-      <div class="panel standings-panel" id="teams">
-        <div class="panel-header"><h2>Group Standings</h2><a href="#groups">View all groups</a></div>
-        <div class="tabs"><span class="active-tab">Group A</span><span>Group B</span><span>Group C</span><span>Group D</span></div>
-        <table class="standings-table">
-          <thead><tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
-          <tbody>
-            <tr><td><b>1</b></td><td>🇲🇽 Mexico</td><td>2</td><td>+3</td><td>6</td></tr>
-            <tr><td><b>2</b></td><td>🇳🇱 Netherlands</td><td>2</td><td>+1</td><td>3</td></tr>
-            <tr><td><b>3</b></td><td>🇸🇳 Senegal</td><td>2</td><td>0</td><td>3</td></tr>
-            <tr><td><b>4</b></td><td>🇪🇨 Ecuador</td><td>2</td><td>-4</td><td>0</td></tr>
-          </tbody>
-        </table>
-      </div>
+</div>
+<div class="panel standings-panel" id="teams">
+<div class="panel-header"><h2>Group Standings</h2><a href="#groups">View all groups</a></div>
+<div class="tabs"></div>
+<table class="standings-table">
+<thead><tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
+<tbody></tbody>
+</table>
+</div>
+<div class="panel scorers-panel" id="stats">
+<div class="panel-header"><h2>Top Scorers</h2><a href="#stats">View all</a></div>
 
-      <div class="panel scorers-panel" id="stats">
-        <div class="panel-header"><h2>Top Scorers</h2><a href="#stats">View all</a></div>
-        <div class="scorer-row"><span>1</span><strong>🇫🇷 K. Mbappé</strong><em>5</em></div>
-        <div class="scorer-row"><span>2</span><strong>🏴 H. Kane</strong><em>4</em></div>
-        <div class="scorer-row"><span>3</span><strong>🇦🇷 L. Martínez</strong><em>3</em></div>
-        <div class="scorer-row"><span>4</span><strong>🇧🇷 Vinícius Jr.</strong><em>3</em></div>
-      </div>
 
-      <div class="panel alerts-panel" id="alerts">
-        <div class="panel-header"><h2>🚨 Tournament Alerts</h2><a href="#alerts">View all</a></div>
-        <div class="alert critical">🩹 Mbappé doubtful for next match</div>
-        <div class="alert warning">🚫 Bellingham suspended</div>
-        <div class="alert info">🏟 Host city security update</div>
-      </div>
 
-      <div class="panel bracket-panel" id="bracket">
-        <div class="panel-header"><h2>Knockout Bracket</h2><a href="#bracket">View full bracket</a></div>
-        <div class="bracket"><div class="round"><small>Round of 32</small><span>1A</span><span>2B</span><span>1C</span><span>2D</span></div><div class="connector">›</div><div class="round"><small>Round of 16</small><span></span><span></span></div><div class="connector">›</div><div class="round"><small>Quarter-finals</small><span></span></div><div class="connector">›</div><div class="final">🏆<p>Final</p><small>19 July 2026</small></div></div>
-      </div>
 
-      <div class="panel all-groups-panel" id="groups">
-        <div class="panel-header"><h2>All Groups</h2><a href="#groups">View all</a></div>
-        <div class="group-grid">
-          <div class="group-card green"><strong>Group A</strong><span>🇲🇽 🇿🇦 🇰🇷 🇨🇿</span></div>
-          <div class="group-card green"><strong>Group B</strong><span>🇨🇦 🇨🇭 🇶🇦 🇧🇦</span></div>
-          <div class="group-card orange"><strong>Group C</strong><span>🇧🇷 🇲🇦 🇭🇹 🏴</span></div>
-          <div class="group-card blue"><strong>Group D</strong><span>🇺🇸 🇵🇾 🇦🇺 🇹🇷</span></div>
-          <div class="group-card green"><strong>Group E</strong><span>🇩🇪 🇨🇼 🇨🇮 🇪🇨</span></div>
-          <div class="group-card green"><strong>Group F</strong><span>🇳🇱 🇯🇵 🇹🇳 🇸🇪</span></div>
-          <div class="group-card red"><strong>Group G</strong><span>🇧🇪 🇪🇬 🇮🇷 🇳🇿</span></div>
-          <div class="group-card blue"><strong>Group H</strong><span>🇪🇸 🇨🇻 🇸🇦 🇺🇾</span></div>
-          <div class="group-card green"><strong>Group I</strong><span>🇫🇷 🇸🇳 🇮🇶 🇳🇴</span></div>
-          <div class="group-card orange"><strong>Group J</strong><span>🇦🇷 🇩🇿 🇦🇹 🇯🇴</span></div>
-          <div class="group-card red"><strong>Group K</strong><span>🇵🇹 🇨🇩 🇺🇿 🇨🇴</span></div>
-          <div class="group-card blue"><strong>Group L</strong><span>🏴 🇭🇷 🇬🇭 🇵🇦</span></div>
-        </div>
-      </div>
+</div>
+<div class="panel alerts-panel" id="alerts">
+<div class="panel-header"><h2>🚨 Tournament Alerts</h2><a href="#alerts">View all</a></div>
 
-      <div class="panel info-panel">
-        <h2>Tournament Info</h2>
-        <div class="info-row"><span>Host Countries</span><strong>🇨🇦 🇲🇽 🇺🇸</strong></div>
-        <div class="info-row"><span>Start Date</span><strong>11 June 2026</strong></div>
-        <div class="info-row"><span>End Date</span><strong>19 July 2026</strong></div>
-        <div class="info-row"><span>Teams</span><strong>48</strong></div>
-        <div class="info-row"><span>Matches</span><strong>104</strong></div>
-      </div>
 
-      <div class="panel venue-panel" id="venues">
-        <div class="panel-header"><h2>Venue Map</h2><a href="#venues">View full map</a></div>
-        <div class="map"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span><span class="dot d5"></span><span class="dot d6"></span><span class="dot d7"></span><span class="dot d8"></span></div>
-        <div class="venue-list"><p><span class="green-dot"></span> MetLife Stadium — East Rutherford</p><p><span class="orange-dot"></span> AT&T Stadium — Dallas</p><p><span class="blue-dot"></span> BC Place — Vancouver</p></div>
-      </div>
 
-      <div class="panel results-panel">
-        <div class="panel-header"><h2>Recent Results</h2><a href="#">View all</a></div>
-        <div class="result-row"><span>🇺🇸 USA</span><strong>3 - 1</strong><span>🇨🇱 Chile</span></div>
-        <div class="result-row"><span>🏴 England</span><strong>2 - 0</strong><span>🇦🇺 Australia</span></div>
-        <div class="result-row"><span>🇧🇷 Brazil</span><strong>4 - 0</strong><span>🇭🇳 Honduras</span></div>
-      </div>
-    </section>
-    <section class="detail-view" id="detail-view" aria-live="polite"></section>
-  </main>
+</div>
+<div class="panel bracket-panel" id="bracket">
+<div class="panel-header"><h2>Knockout Bracket</h2><a href="#bracket">View full bracket</a></div>
+<div class="bracket"><div class="round"><small>Round of 32</small><span>1A</span><span>2B</span><span>1C</span><span>2D</span></div><div class="connector">›</div><div class="round"><small>Round of 16</small><span></span><span></span></div><div class="connector">›</div><div class="round"><small>Quarter-finals</small><span></span></div><div class="connector">›</div><div class="final">🏆<p>Final</p><small>19 July 2026</small></div></div>
+</div>
+<div class="panel all-groups-panel" id="groups">
+<div class="panel-header"><h2>All Groups</h2><a href="#groups">View all</a></div>
+<div class="group-grid"></div>
+</div>
+<div class="panel info-panel">
+<h2>Tournament Info</h2>
+<div class="info-row"><span>Host Countries</span><strong>🇨🇦 🇲🇽 🇺🇸</strong></div>
+<div class="info-row"><span>Start Date</span><strong>11 June 2026</strong></div>
+<div class="info-row"><span>End Date</span><strong>19 July 2026</strong></div>
+<div class="info-row"><span>Teams</span><strong>48</strong></div>
+<div class="info-row"><span>Matches</span><strong>104</strong></div>
+</div>
+<div class="panel venue-panel" id="venues">
+<div class="panel-header"><h2>Venue Map</h2><a href="#venues">View full map</a></div>
+<div class="map"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span><span class="dot d5"></span><span class="dot d6"></span><span class="dot d7"></span><span class="dot d8"></span></div>
+<div class="venue-list"><p><span class="green-dot"></span> MetLife Stadium — East Rutherford</p><p><span class="orange-dot"></span> AT&amp;T Stadium — Dallas</p><p><span class="blue-dot"></span> BC Place — Vancouver</p></div>
+</div>
+<div class="panel results-panel">
+<div class="panel-header"><h2>Recent Results</h2><a href="#">View all</a></div>
+
+
+
+</div>
+</section>
+<section aria-live="polite" class="detail-view" id="detail-view"></section>
+</main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
-<script src="data.js?v=18"></script>
-<script src="worldcup26.js?v=18"></script>
-<script src="app.js?v=18"></script>
+<script src="data.js?v=19"></script>
+<script src="worldcup26.js?v=19"></script>
+<script src="app.js?v=19"></script>
 </body>
 </html>
