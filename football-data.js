@@ -88,7 +88,7 @@
   }
 
   function setApiAlert(type, message) {
-    if (!window.WC_DATA) return;
+    if (typeof WC_DATA === 'undefined') return;
 
     WC_DATA.alerts = (WC_DATA.alerts || []).filter(alert => !alert.apiSource);
     WC_DATA.alerts.unshift({

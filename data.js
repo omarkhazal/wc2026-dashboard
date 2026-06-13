@@ -140,3 +140,7 @@ const WC_DATA = {
     { name: "Vancouver Stadium", city: "Vancouver", country: "Canada", matches: null }
   ]
 };
+
+
+// Expose the data object to API connector scripts.
+window.WC_DATA = WC_DATA;
