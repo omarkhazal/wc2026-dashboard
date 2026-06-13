@@ -815,3 +815,10 @@ html {
 .api-token-button:hover {
   background: rgba(255,255,255,.18);
 }
+
+
+/* v12 worldcup26.ir no-key API integration */
+.alert.info:first-child {
+  border-color: rgba(66, 211, 146, .25);
+  background: rgba(66, 211, 146, .09);
+}

@@ -575,8 +575,8 @@ function renderAlertsDetail() {
 async function bootDashboard() {
   updateTournamentStatus();
 
-  if (window.FootballDataOrg) {
-    await FootballDataOrg.load();
+  if (window.WorldCup26API) {
+    await WorldCup26API.load();
   }
 
   renderLiveMatches();
@@ -594,8 +594,8 @@ async function bootDashboard() {
 }
 
 async function refreshDashboardData() {
-  if (window.FootballDataOrg) {
-    await FootballDataOrg.load();
+  if (window.WorldCup26API) {
+    await WorldCup26API.load();
     renderLiveMatches();
     renderTodayMatches();
     renderStandings("A");
