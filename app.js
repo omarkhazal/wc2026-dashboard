@@ -231,6 +231,77 @@ function renderTournamentInfo() {
   });
 }
 
+function renderFavoritePanel() {
+  const panel = document.querySelector(".favorite-panel-body");
+  if (!panel) return;
+
+  const favorite = getFavoriteTeam();
+
+  if (!favorite) {
+    panel.innerHTML = `
+      <div class="empty-state favorite-empty">
+        <strong>No favorite team yet.</strong><br>
+        Pick a team to turn this into your personal World Cup command center.
+        <button data-favorite-choose type="button">Choose team</button>
+      </div>
+    `;
+
+    panel.querySelector("[data-favorite-choose]")?.addEventListener("click", () => {
+      window.WC_OPEN_VIEW?.("teams");
+    });
+    return;
+  }
+
+  const matches = getTeamMatches(favorite);
+  const next = matches.find(match => !match.isFinished) || matches[0];
+
+  panel.innerHTML = `
+    <div class="favorite-dashboard-card">
+      <div class="favorite-dashboard-head">
+        <span>${favorite.flag}</span>
+        <div>
+          <strong>${favorite.name}</strong>
+          <small>Group ${favorite.group} · ${favorite.code}</small>
+        </div>
+      </div>
+
+      <div class="favorite-dashboard-stats">
+        <span>P ${favorite.p}</span>
+        <span>GD ${favorite.gd}</span>
+        <span>PTS ${favorite.pts}</span>
+      </div>
+
+      ${next ? `
+        <div class="favorite-next-match">
+          <small>${next.dateLabel || "TBD"} · ${next.time || "--:--"} · ${next.group || "World Cup"}</small>
+          <strong>${next.home} ${next.score || "vs"} ${next.away}</strong>
+          <em>${next.status || "Upcoming"}</em>
+        </div>
+      ` : `
+        <div class="favorite-next-match">
+          <small>Fixtures pending</small>
+          <strong>No matched fixtures yet</strong>
+          <em>API data will fill this</em>
+        </div>
+      `}
+
+      <div class="favorite-dashboard-actions">
+        <button data-open-favorite-team type="button">Open Team Center</button>
+        <button data-view-target="matches" type="button">Matches</button>
+      </div>
+    </div>
+  `;
+
+  panel.querySelector("[data-open-favorite-team]")?.addEventListener("click", () => {
+    window.WC_SELECTED_TEAM_CODE = favorite.code;
+    window.WC_OPEN_VIEW?.("teamcenter");
+  });
+
+  panel.querySelector("[data-view-target='matches']")?.addEventListener("click", () => {
+    window.WC_OPEN_VIEW?.("matches");
+  });
+}
+
 function renderTwemoji() {
   if (window.twemoji) {
     twemoji.parse(document.body, {
@@ -368,6 +439,8 @@ function setupNavigation() {
     history.replaceState(null, "", `#${view}`);
     setTimeout(renderTwemoji, 50);
   }
+
+  window.WC_OPEN_VIEW = openView;
 
   links.forEach(link => {
     link.addEventListener("click", event => {
@@ -682,6 +755,7 @@ async function bootDashboard() {
   renderAlerts();
   renderResults();
   renderTournamentInfo();
+  renderFavoritePanel();
   setupNavigation();
   renderFavoriteTeamChip();
 
@@ -701,6 +775,7 @@ async function bootDashboard() {
         renderAlerts();
         renderResults();
         renderTournamentInfo();
+        renderFavoritePanel();
         renderFavoriteTeamChip();
 
         const activeView = document.querySelector(".nav a.active")?.dataset.view;

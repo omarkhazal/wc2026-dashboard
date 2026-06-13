@@ -1564,3 +1564,109 @@ body:not(.dashboard-ready) .detail-view {
     margin-bottom: 12px;
   }
 }
+
+
+/* v26 Favorite Team dashboard card */
+.favorite-panel {
+  grid-column: span 6;
+}
+
+.favorite-panel-body {
+  min-height: 185px;
+}
+
+.favorite-empty button {
+  display: block;
+  margin-top: 12px;
+  border: 1px solid rgba(255,211,105,.24);
+  background: rgba(255,211,105,.10);
+  color: #ffd369;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.favorite-dashboard-card {
+  display: grid;
+  gap: 12px;
+}
+
+.favorite-dashboard-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.favorite-dashboard-head > span {
+  font-size: 2.3rem;
+}
+
+.favorite-dashboard-head strong {
+  display: block;
+  font-size: 1.1rem;
+}
+
+.favorite-dashboard-head small {
+  color: #92a2d5;
+}
+
+.favorite-dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.favorite-dashboard-stats span {
+  text-align: center;
+  border-radius: 999px;
+  background: rgba(255,255,255,.06);
+  padding: 8px;
+  color: #d9e2ff;
+  font-size: .72rem;
+  font-weight: 900;
+}
+
+.favorite-next-match {
+  display: grid;
+  gap: 5px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  border-radius: 14px;
+  padding: 11px;
+}
+
+.favorite-next-match small,
+.favorite-next-match em {
+  color: #92a2d5;
+  font-style: normal;
+  font-size: .72rem;
+}
+
+.favorite-dashboard-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.favorite-dashboard-actions button {
+  flex: 1;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  border-radius: 999px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.favorite-dashboard-actions button:first-child {
+  border-color: rgba(255,211,105,.24);
+  background: rgba(255,211,105,.10);
+  color: #ffd369;
+}
+
+@media (max-width: 1200px) {
+  .favorite-panel {
+    grid-column: span 12;
+  }
+}
