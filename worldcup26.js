@@ -19,14 +19,34 @@
     return arrays.length ? arrays.sort((a, b) => b.length - a.length)[0] : [];
   }
 
-  async function fetchJson(path) {
-    const response = await fetch(`${API_BASE}${path}`, { cache: "no-store" });
+  function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-    if (!response.ok) {
-      throw new Error(`${path}: ${response.status} ${response.statusText}`);
+  async function fetchJson(path, attempts = 3) {
+    let lastError;
+
+    for (let attempt = 1; attempt <= attempts; attempt += 1) {
+      try {
+        const response = await fetch(`${API_BASE}${path}`, {
+          cache: "no-store",
+          mode: "cors"
+        });
+
+        if (!response.ok) {
+          throw new Error(`${path}: ${response.status} ${response.statusText}`);
+        }
+
+        return response.json();
+      } catch (error) {
+        lastError = error;
+        if (attempt < attempts) {
+          await wait(700 * attempt);
+        }
+      }
     }
 
-    return response.json();
+    throw lastError;
   }
 
   function normalizeId(value) {
@@ -408,10 +428,10 @@
   async function load() {
     try {
       const [gamesPayload, teamsPayload, stadiumsPayload, groupsPayload] = await Promise.all([
-        fetchJson("/games"),
-        fetchJson("/teams").catch(() => ({})),
-        fetchJson("/stadiums").catch(() => ({})),
-        fetchJson("/groups").catch(() => ({}))
+        fetchJson("/games", 4),
+        fetchJson("/teams", 1).catch(() => ({})),
+        fetchJson("/stadiums", 1).catch(() => ({})),
+        fetchJson("/groups", 1).catch(() => ({}))
       ]);
 
       const games = getArray(gamesPayload, "games");
@@ -438,7 +458,7 @@
     } catch (error) {
       setApiAlert(
         "warning",
-        `⚠️ worldcup26.ir failed. Using local fallback data. ${error.message || ""}`
+        `⚠️ worldcup26.ir failed after retrying. Using local fallback data. ${error.message || ""}`
       );
 
       return {

@@ -610,4 +610,4 @@ async function refreshDashboardData() {
 
 bootDashboard();
 setInterval(updateTournamentStatus, 1000);
-setInterval(refreshDashboardData, 60000);
+setInterval(refreshDashboardData, 30000);
