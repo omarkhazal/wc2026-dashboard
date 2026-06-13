@@ -496,7 +496,85 @@
     };
   }
 
+  function applyPayloadToDashboard(payload, sourceName, mode) {
+    const games = Array.isArray(payload?.games) ? payload.games : getArray(payload, "games");
+    const teams = Array.isArray(payload?.teams) ? payload.teams : getArray(payload, "teams");
+    const stadiums = Array.isArray(payload?.stadiums) ? payload.stadiums : getArray(payload, "stadiums");
+
+    if (!Array.isArray(games) || !games.length) {
+      throw new Error(`${sourceName}: no games available`);
+    }
+
+    const stadiumResult = applyStadiums(stadiums);
+    const teamCount = applyTeams(teams);
+    const gameStats = applyGames(games, teams, stadiumResult.byId);
+
+    const stats = {
+      games: gameStats.games,
+      live: gameStats.live,
+      today: gameStats.today,
+      finished: gameStats.finished,
+      teams: teamCount || teams.length || WC_DATA.tournament.metrics.teams,
+      stadiums: stadiumResult.count || stadiums.length || WC_DATA.tournament.metrics.venues
+    };
+
+    saveLastGoodData(stats);
+
+    WC_DATA.apiMeta = {
+      mode,
+      source: sourceName,
+      syncedAt: payload?.generatedAt || new Date().toISOString(),
+      games: stats.games,
+      teams: stats.teams,
+      stadiums: stats.stadiums,
+      cache: mode === "repo" ? "repository" : "saved"
+    };
+
+    return stats;
+  }
+
+  async function fetchRepositoryData() {
+    const response = await fetch(`data/wc-data.json?ts=${Date.now()}`, {
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      throw new Error(`repository cache: ${response.status}`);
+    }
+
+    const payload = await response.json();
+
+    if (!payload || payload.source === "seed" || !Array.isArray(payload.games) || !payload.games.length) {
+      throw new Error("repository cache is empty or not generated yet");
+    }
+
+    return payload;
+  }
+
   async function load() {
+    let repositoryError = null;
+
+    try {
+      const repoPayload = await fetchRepositoryData();
+      const stats = applyPayloadToDashboard(repoPayload, "data/wc-data.json", "repo");
+      const syncTime = new Date(WC_DATA.apiMeta.syncedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+      setApiAlert(
+        "info",
+        `🟢 Repository API cache loaded at ${syncTime}. Games: ${stats.games}. Teams: ${stats.teams}. Stadiums: ${stats.stadiums}.`
+      );
+
+      return {
+        ok: true,
+        source: "data/wc-data.json",
+        stats,
+        generatedAt: repoPayload.generatedAt
+      };
+    } catch (error) {
+      repositoryError = error;
+      console.warn("Repository API cache unavailable:", error.message || error);
+    }
+
     try {
       const [gamesPayload, teamsPayload, stadiumsPayload, groupsPayload] = await Promise.all([
         fetchJson("/games", 4),
@@ -505,47 +583,28 @@
         fetchJson("/groups", 1).catch(() => ({}))
       ]);
 
-      const games = getArray(gamesPayload, "games");
-      const teams = getArray(teamsPayload, "teams");
-      const stadiums = getArray(stadiumsPayload, "stadiums");
-
-      const stadiumResult = applyStadiums(stadiums);
-      const teamCount = applyTeams(teams);
-      const gameStats = applyGames(games, teams, stadiumResult.byId);
-
-      const stats = {
-        games: gameStats.games,
-        live: gameStats.live,
-        today: gameStats.today,
-        finished: gameStats.finished,
-        teams: teamCount,
-        stadiums: stadiumResult.count
-      };
-
-      saveLastGoodData(stats);
-
-      const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-
-      WC_DATA.apiMeta = {
-        mode: "live",
+      const livePayload = {
+        generatedAt: new Date().toISOString(),
         source: "worldcup26.ir",
-        syncedAt: new Date().toISOString(),
-        games: stats.games,
-        teams: stats.teams,
-        stadiums: stats.stadiums,
-        cache: "saved"
+        games: getArray(gamesPayload, "games"),
+        teams: getArray(teamsPayload, "teams"),
+        stadiums: getArray(stadiumsPayload, "stadiums"),
+        groups: getArray(groupsPayload, "groups")
       };
+
+      const stats = applyPayloadToDashboard(livePayload, "worldcup26.ir", "live");
+      const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
       setApiAlert(
         "info",
-        `🟢 Live data synced at ${now}. Games: ${stats.games}. Teams: ${stats.teams}. Stadiums: ${stats.stadiums}. Last-good cache saved.`
+        `🟢 Live API synced at ${now}. Games: ${stats.games}. Teams: ${stats.teams}. Stadiums: ${stats.stadiums}. Repository cache pending.`
       );
 
       return {
         ok: true,
         source: "worldcup26.ir",
         stats,
-        groupsPayload
+        repositoryError: repositoryError?.message || String(repositoryError || "")
       };
     } catch (error) {
       const cached = loadLastGoodData();
@@ -563,7 +622,7 @@
 
         setApiAlert(
           "warning",
-          `🟡 Live API unavailable, using saved data from ${cacheAgeLabel(cached.savedAt)}.`
+          `🟡 API unavailable, using saved browser cache from ${cacheAgeLabel(cached.savedAt)}.`
         );
 
         return {
@@ -587,7 +646,7 @@
 
       setApiAlert(
         "warning",
-        `⚠️ Live API unavailable and no saved API cache exists. Using built-in fallback data.`
+        `⚠️ API unavailable and no saved browser cache exists. Using built-in fallback data.`
       );
 
       return {

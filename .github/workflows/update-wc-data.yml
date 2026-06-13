@@ -1,0 +1,83 @@
+name: Update World Cup data
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Fetch World Cup data
+        run: |
+          mkdir -p data
+          node <<'NODE'
+          const fs = require("fs");
+
+          const API_BASE = "https://worldcup26.ir/get";
+          const endpoints = ["games", "teams", "stadiums", "groups"];
+
+          async function fetchEndpoint(name) {
+            const response = await fetch(`${API_BASE}/${name}`, {
+              headers: { "accept": "application/json" }
+            });
+
+            if (!response.ok) {
+              throw new Error(`${name}: ${response.status} ${response.statusText}`);
+            }
+
+            const payload = await response.json();
+
+            if (Array.isArray(payload)) return payload;
+            if (Array.isArray(payload[name])) return payload[name];
+            if (payload.data && Array.isArray(payload.data[name])) return payload.data[name];
+            if (payload.result && Array.isArray(payload.result[name])) return payload.result[name];
+
+            const arrays = Object.values(payload).filter(Array.isArray);
+            return arrays.length ? arrays.sort((a, b) => b.length - a.length)[0] : [];
+          }
+
+          const output = {
+            generatedAt: new Date().toISOString(),
+            source: "worldcup26.ir",
+            games: [],
+            teams: [],
+            stadiums: [],
+            groups: []
+          };
+
+          for (const endpoint of endpoints) {
+            try {
+              output[endpoint] = await fetchEndpoint(endpoint);
+              console.log(`${endpoint}: ${output[endpoint].length}`);
+            } catch (error) {
+              console.warn(`Failed to fetch ${endpoint}:`, error.message);
+            }
+          }
+
+          if (!output.games.length) {
+            throw new Error("No games returned. Refusing to overwrite data/wc-data.json.");
+          }
+
+          fs.writeFileSync("data/wc-data.json", `${JSON.stringify(output, null, 2)}\n`);
+          NODE
+
+      - name: Commit data update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/wc-data.json
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "Update World Cup data cache"
+            git push
+          fi

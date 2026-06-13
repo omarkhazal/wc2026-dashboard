@@ -243,12 +243,13 @@ function renderDataPanel() {
 
   const modeLabel = {
     live: "Live API",
+    repo: "Repository cache",
     cache: "Saved cache",
     fallback: "Fallback",
     boot: "Starting"
   }[meta.mode] || meta.mode;
 
-  const statusClass = meta.mode === "live" ? "live" : meta.mode === "cache" ? "cache" : "fallback";
+  const statusClass = meta.mode === "live" || meta.mode === "repo" ? "live" : meta.mode === "cache" ? "cache" : "fallback";
   const syncLabel = meta.syncedAt
     ? new Date(meta.syncedAt).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
     : "waiting";
@@ -269,7 +270,7 @@ function renderDataPanel() {
     </div>
 
     <div class="data-coverage-list">
-      <p><span>Matches</span><strong>${meta.mode === "live" || meta.mode === "cache" ? "Connected" : "Fallback"}</strong></p>
+      <p><span>Matches</span><strong>${meta.mode === "live" || meta.mode === "repo" || meta.mode === "cache" ? "Connected" : "Fallback"}</strong></p>
       <p><span>Teams</span><strong>Connected</strong></p>
       <p><span>Stadiums</span><strong>Connected</strong></p>
       <p><span>Standings</span><strong>Local safe mode</strong></p>
@@ -291,6 +292,7 @@ function renderHeroDataBadge() {
 
   const labels = {
     live: "🟢 Live API",
+    repo: "🟢 Repo cache",
     cache: "🟡 Saved cache",
     fallback: "🔴 Local fallback",
     boot: "⚪ Starting"

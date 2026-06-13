@@ -1,0 +1,9 @@
+{
+  "generatedAt": null,
+  "source": "seed",
+  "note": "GitHub Actions will replace this file with live World Cup API data.",
+  "games": [],
+  "teams": [],
+  "stadiums": [],
+  "groups": []
+}
