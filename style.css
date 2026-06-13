@@ -1670,3 +1670,9 @@ body:not(.dashboard-ready) .detail-view {
     grid-column: span 12;
   }
 }
+
+
+/* v27 Favorite panel is optional: hidden until a favorite team is selected */
+.favorite-panel[style*="display: none"] {
+  display: none !important;
+}
