@@ -837,3 +837,11 @@ body.dashboard-ready .detail-view {
   opacity: 1;
   transition: opacity .18s ease;
 }
+
+
+/* v20: render immediately; no blank waiting state */
+body:not(.dashboard-ready) .top-row,
+body:not(.dashboard-ready) .dashboard-grid,
+body:not(.dashboard-ready) .detail-view {
+  opacity: 1 !important;
+}

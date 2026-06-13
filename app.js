@@ -575,10 +575,7 @@ function renderAlertsDetail() {
 async function bootDashboard() {
   updateTournamentStatus();
 
-  if (window.WorldCup26API) {
-    await WorldCup26API.load();
-  }
-
+  // Render immediately from local data.js so the dashboard never sits blank.
   renderLiveMatches();
   renderTodayMatches();
   renderGroupTabs();
@@ -592,6 +589,26 @@ async function bootDashboard() {
 
   document.body.classList.add("dashboard-ready");
   setTimeout(renderTwemoji, 100);
+
+  // Then load the free API in the background and re-render once when it finishes.
+  if (window.WorldCup26API) {
+    WorldCup26API.load()
+      .then(() => {
+        renderLiveMatches();
+        renderTodayMatches();
+        renderGroupTabs();
+        renderStandings("A");
+        renderAllGroups();
+        renderScorers();
+        renderAlerts();
+        renderResults();
+        renderTournamentInfo();
+        setTimeout(renderTwemoji, 100);
+      })
+      .catch(error => {
+        console.warn("WorldCup26 API background load failed:", error);
+      });
+  }
 }
 
 async function refreshDashboardData() {

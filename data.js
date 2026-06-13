@@ -116,9 +116,9 @@ const WC_DATA = {
   scorers: [],
 
   alerts: [
-    { type: "info", text: "📌 v9 clean-data pass: fake scorers and fake injury alerts removed." },
-    { type: "info", text: "🔌 Live score API is not connected yet. Current live panel intentionally shows an empty state." },
-    { type: "info", text: "🏆 Knockout bracket unlocks after group-stage qualification is known." }
+    { type: "info", text: "📊 Dashboard uses structured WC 2026 data with API fallback." },
+    { type: "info", text: "🏆 Knockout bracket unlocks after group-stage qualification is known." },
+    { type: "info", text: "🔄 Match data loads from the free worldcup26.ir API when available." }
   ],
 
   venues: [
