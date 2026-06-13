@@ -527,3 +527,236 @@ html {
     overflow-y: visible;
   }
 }
+
+
+/* v8 dedicated-view navigation
+   Sidebar links now open dedicated dashboard pages instead of only scrolling. */
+.detail-view {
+  display: none;
+}
+
+.detail-view.active {
+  display: block;
+}
+
+.view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(105,40,232,.32), rgba(10,18,37,.92));
+  border: 1px solid rgba(255,255,255,.09);
+  box-shadow: 0 12px 34px rgba(0,0,0,.26);
+}
+
+.view-header h2 {
+  font-size: 1.35rem;
+  margin-bottom: 4px;
+}
+
+.view-header p {
+  color: #b9c5e8;
+  font-size: .86rem;
+}
+
+.view-back {
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.07);
+  color: white;
+  border-radius: 999px;
+  padding: 9px 13px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.view-back:hover {
+  background: rgba(255,255,255,.12);
+}
+
+.view-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 12px;
+}
+
+.view-card {
+  grid-column: span 4;
+  background: rgba(10,18,37,.82);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  padding: 15px;
+  box-shadow: 0 10px 32px rgba(0,0,0,.25);
+}
+
+.view-card.wide {
+  grid-column: span 6;
+}
+
+.view-card.full {
+  grid-column: 1 / -1;
+}
+
+.view-card h3 {
+  font-size: .95rem;
+  margin-bottom: 10px;
+}
+
+.view-card p {
+  color: #b9c5e8;
+  font-size: .82rem;
+  line-height: 1.45;
+}
+
+.view-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.view-table th,
+.view-table td {
+  padding: 9px 8px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  text-align: left;
+  font-size: .84rem;
+}
+
+.view-table th {
+  color: #94a4d8;
+  text-transform: uppercase;
+  font-size: .68rem;
+  letter-spacing: .08em;
+}
+
+.view-match {
+  display: grid;
+  grid-template-columns: 72px 1fr 36px 1fr 90px;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  font-size: .86rem;
+}
+
+.view-match strong {
+  text-align: center;
+  color: #ffd369;
+}
+
+.view-pill {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.08);
+  color: #d9e2ff;
+  font-size: .72rem;
+}
+
+.full-group-card {
+  grid-column: span 3;
+  background: rgba(10,18,37,.82);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.full-group-card h3 {
+  margin-bottom: 10px;
+}
+
+.team-chip {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  color: #d9e2ff;
+}
+
+.team-chip:last-child {
+  border-bottom: 0;
+}
+
+.bracket-detail {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.bracket-column {
+  background: rgba(255,255,255,.035);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.bracket-column h3 {
+  color: #ffd369;
+}
+
+.bracket-slot {
+  height: 34px;
+  margin: 8px 0;
+  border-radius: 10px;
+  background: rgba(255,255,255,.07);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  color: #c9d5ff;
+  font-size: .78rem;
+}
+
+.route-note {
+  margin-top: 12px;
+  padding: 11px 13px;
+  border-radius: 14px;
+  background: rgba(255, 211, 105, .08);
+  border: 1px solid rgba(255, 211, 105, .16);
+  color: #ffe3a3;
+  font-size: .82rem;
+}
+
+@media (max-width: 1200px) {
+  .view-card,
+  .view-card.wide,
+  .full-group-card {
+    grid-column: span 6;
+  }
+
+  .bracket-detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .view-grid {
+    display: block;
+  }
+
+  .view-card,
+  .view-card.wide,
+  .view-card.full,
+  .full-group-card {
+    margin-bottom: 12px;
+  }
+
+  .view-header {
+    display: block;
+  }
+
+  .view-back {
+    margin-top: 12px;
+  }
+
+  .view-match {
+    grid-template-columns: 60px 1fr;
+  }
+
+  .view-match strong,
+  .view-match em {
+    display: none;
+  }
+}

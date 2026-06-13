@@ -16,15 +16,15 @@
       <p>CANADA • MEXICO • USA</p>
     </div>
     <nav class="nav">
-      <a class="active" href="#dashboard">⌂ Dashboard</a>
-      <a href="#live">🔴 Live Matches</a>
-      <a href="#today">📅 Today</a>
-      <a href="#groups">🏟 Groups</a>
-      <a href="#teams">🛡 Teams</a>
-      <a href="#bracket">⚔ Bracket</a>
-      <a href="#stats">📊 Stats</a>
-      <a href="#venues">🗺 Venues</a>
-      <a href="#alerts">🚨 Alerts</a>
+      <a class="active" href="#dashboard" data-view="dashboard">⌂ Dashboard</a>
+      <a href="#live" data-view="live">🔴 Live Matches</a>
+      <a href="#today" data-view="today">📅 Today</a>
+      <a href="#groups" data-view="groups">🏟 Groups</a>
+      <a href="#teams" data-view="teams">🛡 Teams</a>
+      <a href="#bracket" data-view="bracket">⚔ Bracket</a>
+      <a href="#stats" data-view="stats">📊 Stats</a>
+      <a href="#venues" data-view="venues">🗺 Venues</a>
+      <a href="#alerts" data-view="alerts">🚨 Alerts</a>
     </nav>
     <div class="date-card">
       <h3>Tournament Dates</h3>
@@ -52,7 +52,7 @@
       <div class="kpi purple"><span>🧩</span><h3>Groups</h3><strong>12</strong><p>Groups</p></div>
     </section>
 
-    <section class="dashboard-grid">
+    <section class="dashboard-grid" id="dashboard-grid">
       <div class="panel live-panel" id="live">
         <div class="panel-header"><h2><span class="red-dot"></span> Live Matches</h2><a href="#live">View all</a></div>
         <div class="live-games">
@@ -142,6 +142,7 @@
         <div class="result-row"><span>🇧🇷 Brazil</span><strong>4 - 0</strong><span>🇭🇳 Honduras</span></div>
       </div>
     </section>
+    <section class="detail-view" id="detail-view" aria-live="polite"></section>
   </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
