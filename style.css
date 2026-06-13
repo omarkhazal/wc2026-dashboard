@@ -1930,3 +1930,27 @@ body:not(.dashboard-ready) .detail-view {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+
+/* v34 Dashboard action polish */
+.clickable-kpi {
+  cursor: pointer;
+  transition: transform .16s ease, border-color .16s ease, background .16s ease;
+}
+
+.clickable-kpi:hover,
+.clickable-kpi:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 211, 105, .28);
+  background: rgba(255,255,255,.08);
+  outline: none;
+}
+
+.panel-header a[href="#matches"],
+.panel-header a[href="#players"],
+.panel-header a[href="#groups"],
+.panel-header a[href="#venues"],
+.panel-header a[href="#alerts"],
+.panel-header a[href="#bracket"] {
+  white-space: nowrap;
+}

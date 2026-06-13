@@ -8,7 +8,7 @@
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <title>World Cup 2026 Dashboard</title>
-<link href="style.css?v=33" rel="stylesheet"/>
+<link href="style.css?v=34" rel="stylesheet"/>
 </head>
 <body>
 <div class="app">
@@ -17,7 +17,7 @@
 <div class="trophy">🏆</div>
 <h1>FIFA WORLD CUP</h1>
 <div class="year">2026</div>
-<p>CANADA • MEXICO • USA • v33</p>
+<p>CANADA • MEXICO • USA • v34</p>
 <div class="favorite-chip" id="favorite-chip">☆ Pick favorite team</div>
 </div>
 <nav class="nav">
@@ -51,10 +51,10 @@
 <div>🇺🇸 <span>USA</span></div>
 </div>
 </div>
-<div class="kpi blue"><span>⚽</span><h3>Matches</h3><strong>104</strong><p>Total</p></div>
-<div class="kpi gold"><span>👥</span><h3>Teams</h3><strong>48</strong><p>Qualified</p></div>
-<div class="kpi green"><span>🏟</span><h3>Venues</h3><strong>16</strong><p>Stadiums</p></div>
-<div class="kpi purple"><span>🧩</span><h3>Groups</h3><strong>12</strong><p>Groups</p></div>
+<div class="kpi blue clickable-kpi" data-view-target="matches" role="button" tabindex="0"><span>⚽</span><h3>Matches</h3><strong>104</strong><p>Total</p></div>
+<div class="kpi gold clickable-kpi" data-view-target="teams" role="button" tabindex="0"><span>👥</span><h3>Teams</h3><strong>48</strong><p>Qualified</p></div>
+<div class="kpi green clickable-kpi" data-view-target="venues" role="button" tabindex="0"><span>🏟</span><h3>Venues</h3><strong>16</strong><p>Stadiums</p></div>
+<div class="kpi purple clickable-kpi" data-view-target="groups" role="button" tabindex="0"><span>🧩</span><h3>Groups</h3><strong>12</strong><p>Groups</p></div>
 </section>
 <section class="dashboard-grid" id="dashboard-grid">
 <div class="panel live-panel" id="live">
@@ -80,7 +80,7 @@
 </table>
 </div>
 <div class="panel scorers-panel" id="stats">
-<div class="panel-header"><h2>Top Scorers</h2><a href="#players">Open players</a></div>
+<div class="panel-header"><h2>Top Scorers</h2><a href="#players">Open stats</a></div>
 
 
 
@@ -114,7 +114,7 @@
 <div class="venue-list"><p><span class="green-dot"></span> MetLife Stadium — East Rutherford</p><p><span class="orange-dot"></span> AT&amp;T Stadium — Dallas</p><p><span class="blue-dot"></span> BC Place — Vancouver</p></div>
 </div>
 <div class="panel results-panel">
-<div class="panel-header"><h2>Recent Results</h2><a href="#">View all</a></div>
+<div class="panel-header"><h2>Recent Results</h2><a href="#matches">Open matches</a></div>
 
 
 
@@ -124,8 +124,8 @@
 </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
-<script src="data.js?v=33"></script>
-<script src="worldcup26.js?v=33"></script>
-<script src="app.js?v=33"></script>
+<script src="data.js?v=34"></script>
+<script src="worldcup26.js?v=34"></script>
+<script src="app.js?v=34"></script>
 </body>
 </html>
