@@ -379,6 +379,20 @@ function setupNavigation() {
     });
   });
 
+  const favoriteChip = document.getElementById("favorite-chip");
+  if (favoriteChip) {
+    favoriteChip.addEventListener("click", () => {
+      const favorite = getFavoriteTeam();
+      if (!favorite) {
+        openView("teams");
+        return;
+      }
+
+      window.WC_SELECTED_TEAM_CODE = favorite.code;
+      openView("teamcenter");
+    });
+  }
+
   const startingHash = window.location.hash.replace("#", "");
   if (startingHash && routeMap[`#${startingHash}`] && startingHash !== "dashboard") {
     openView(routeMap[`#${startingHash}`]);
@@ -566,7 +580,7 @@ function renderTeamsPage() {
             <span>${team.flag}</span>
             <div>
               <strong>${team.name}</strong>
-              <small>Group ${team.group} · ${team.code}</small>
+              <small>Group ${team.group} · ${team.code}${getFavoriteTeam()?.code === team.code ? " · Favorite" : ""}</small>
             </div>
           </div>
           <div class="team-card-stats">
@@ -669,6 +683,7 @@ async function bootDashboard() {
   renderResults();
   renderTournamentInfo();
   setupNavigation();
+  renderFavoriteTeamChip();
 
   document.body.classList.add("dashboard-ready");
   setTimeout(renderTwemoji, 100);
@@ -686,6 +701,7 @@ async function bootDashboard() {
         renderAlerts();
         renderResults();
         renderTournamentInfo();
+        renderFavoriteTeamChip();
 
         const activeView = document.querySelector(".nav a.active")?.dataset.view;
         const detailView = document.getElementById("detail-view");
