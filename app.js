@@ -761,13 +761,49 @@ function renderPlayersPage() {
 }
 
 function renderVenuesPage() {
+  const venues = WC_DATA.venues || [];
+  const countries = venues.reduce((acc, venue) => {
+    const key = venue.country || "Host country pending";
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(venue);
+    return acc;
+  }, {});
+
+  const hostFlags = {
+    Canada: "🇨🇦",
+    Mexico: "🇲🇽",
+    USA: "🇺🇸",
+    "United States": "🇺🇸"
+  };
+
   return `
-    <div class="view-grid">
-      ${WC_DATA.venues.map(venue => `
-        <div class="view-card venue-page-card">
-          <h3>${venue.name}</h3>
-          <p>${venue.city || "Host city pending"}${venue.country ? `, ${venue.country}` : ""}</p>
-          <span class="view-pill">${venue.matches ? `${venue.matches} matches` : "World Cup venue"}</span>
+    <div class="venue-summary-grid">
+      ${Object.entries(countries).map(([country, list]) => `
+        <div class="venue-summary-card">
+          <span>${hostFlags[country] || "🏟"}</span>
+          <div>
+            <strong>${country}</strong>
+            <small>${list.length} venues</small>
+          </div>
+        </div>
+      `).join("")}
+    </div>
+
+    <div class="view-grid venue-grid-polished">
+      ${venues.map(venue => `
+        <div class="view-card venue-page-card polished-venue-card">
+          <div class="venue-card-top">
+            <span>${hostFlags[venue.country] || "🏟"}</span>
+            <div>
+              <h3>${venue.name}</h3>
+              <p>${venue.city || "Host city pending"}${venue.country ? `, ${venue.country}` : ""}</p>
+            </div>
+          </div>
+
+          <div class="venue-card-meta">
+            <span>${venue.matches ? `${venue.matches} matches listed` : "Match count pending"}</span>
+            <span>World Cup venue</span>
+          </div>
         </div>
       `).join("")}
     </div>
@@ -775,11 +811,33 @@ function renderVenuesPage() {
 }
 
 function renderAlertsPage() {
+  const alerts = WC_DATA.alerts || [];
+  const apiAlert = alerts.find(alert => alert.apiSource);
+  const cleanAlerts = alerts.filter(alert => !alert.apiSource);
+
   return `
+    <div class="alert-command-strip">
+      <div>
+        <strong>${alerts.length}</strong>
+        <span>Total alerts</span>
+      </div>
+      <div>
+        <strong>${apiAlert ? "Online" : "Fallback"}</strong>
+        <span>Data status</span>
+      </div>
+      <div>
+        <strong>${cleanAlerts.length}</strong>
+        <span>Tournament notes</span>
+      </div>
+    </div>
+
     <div class="view-grid">
-      ${WC_DATA.alerts.map(alert => `
+      ${alerts.map(alert => `
         <div class="view-card wide alert-page-card ${alert.type}">
-          <h3>${alert.type.toUpperCase()}</h3>
+          <div class="alert-card-head">
+            <span>${alert.type === "warning" ? "⚠️" : "ℹ️"}</span>
+            <h3>${alert.apiSource ? "DATA STATUS" : alert.type.toUpperCase()}</h3>
+          </div>
           <p>${alert.text}</p>
         </div>
       `).join("")}
