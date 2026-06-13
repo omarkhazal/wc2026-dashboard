@@ -1149,3 +1149,10 @@ body:not(.dashboard-ready) .detail-view {
     text-align: left;
   }
 }
+
+
+/* v22 API reliability layer */
+.alert.warning {
+  border-color: rgba(255, 211, 105, .28);
+  background: rgba(255, 211, 105, .10);
+}

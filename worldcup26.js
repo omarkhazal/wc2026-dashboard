@@ -4,6 +4,8 @@
 
 (function () {
   const API_BASE = "https://worldcup26.ir/get";
+  const CACHE_KEY = "wc2026LastGoodApiData";
+  const CACHE_VERSION = 22;
   const LIVE_WORDS = ["live", "in_progress", "in progress", "playing", "halftime", "half-time"];
   const FINISHED_WORDS = ["complete", "completed", "finished", "full_time", "full-time", "ft", "ended"];
   const SCHEDULED_WORDS = ["scheduled", "not_started", "not started", "upcoming", "timed"];
@@ -17,6 +19,64 @@
 
     const arrays = Object.values(payload).filter(Array.isArray);
     return arrays.length ? arrays.sort((a, b) => b.length - a.length)[0] : [];
+  }
+
+  function makeSnapshot(stats = {}) {
+    return {
+      version: CACHE_VERSION,
+      savedAt: new Date().toISOString(),
+      stats,
+      allMatches: WC_DATA.allMatches || [],
+      todayMatches: WC_DATA.todayMatches || [],
+      liveMatches: WC_DATA.liveMatches || [],
+      recentResults: WC_DATA.recentResults || [],
+      venues: WC_DATA.venues || []
+    };
+  }
+
+  function saveLastGoodData(stats) {
+    try {
+      const snapshot = makeSnapshot(stats);
+      localStorage.setItem(CACHE_KEY, JSON.stringify(snapshot));
+      return true;
+    } catch (error) {
+      console.warn("Could not save WC API cache:", error);
+      return false;
+    }
+  }
+
+  function loadLastGoodData() {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+
+      const snapshot = JSON.parse(raw);
+      if (!snapshot || snapshot.version !== CACHE_VERSION) return null;
+
+      if (Array.isArray(snapshot.allMatches)) WC_DATA.allMatches = snapshot.allMatches;
+      if (Array.isArray(snapshot.todayMatches)) WC_DATA.todayMatches = snapshot.todayMatches;
+      if (Array.isArray(snapshot.liveMatches)) WC_DATA.liveMatches = snapshot.liveMatches;
+      if (Array.isArray(snapshot.recentResults)) WC_DATA.recentResults = snapshot.recentResults;
+      if (Array.isArray(snapshot.venues) && snapshot.venues.length) WC_DATA.venues = snapshot.venues;
+
+      return snapshot;
+    } catch (error) {
+      console.warn("Could not load WC API cache:", error);
+      return null;
+    }
+  }
+
+  function cacheAgeLabel(savedAt) {
+    if (!savedAt) return "earlier";
+    const date = new Date(savedAt);
+    if (Number.isNaN(date.getTime())) return "earlier";
+
+    return date.toLocaleString([], {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
   }
 
   function wait(ms) {
@@ -448,36 +508,78 @@
       const games = getArray(gamesPayload, "games");
       const teams = getArray(teamsPayload, "teams");
       const stadiums = getArray(stadiumsPayload, "stadiums");
+
       const stadiumResult = applyStadiums(stadiums);
       const teamCount = applyTeams(teams);
       const gameStats = applyGames(games, teams, stadiumResult.byId);
+
+      const stats = {
+        games: gameStats.games,
+        live: gameStats.live,
+        today: gameStats.today,
+        finished: gameStats.finished,
+        teams: teamCount,
+        stadiums: stadiumResult.count
+      };
+
+      saveLastGoodData(stats);
 
       const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
       setApiAlert(
         "info",
-        `🟢 worldcup26.ir connected at ${now}. Games: ${gameStats.games}. Teams: ${teamCount}. Stadiums: ${stadiumResult.count}.`
+        `🟢 Live data synced at ${now}. Games: ${stats.games}. Teams: ${stats.teams}. Stadiums: ${stats.stadiums}. Last-good cache saved.`
       );
 
       return {
         ok: true,
-        games: gameStats.games,
-        teams: teamCount,
-        stadiums: stadiumResult.count,
+        source: "worldcup26.ir",
+        stats,
         groupsPayload
       };
     } catch (error) {
+      const cached = loadLastGoodData();
+
+      if (cached) {
+        setApiAlert(
+          "warning",
+          `🟡 Live API unavailable, using saved data from ${cacheAgeLabel(cached.savedAt)}.`
+        );
+
+        return {
+          ok: true,
+          source: "localStorage cache",
+          cached: true,
+          stats: cached.stats || {},
+          error: error.message || String(error)
+        };
+      }
+
       setApiAlert(
         "warning",
-        `⚠️ worldcup26.ir failed after retrying. Using local fallback data. ${error.message || ""}`
+        `⚠️ Live API unavailable and no saved API cache exists. Using built-in fallback data.`
       );
 
       return {
         ok: false,
+        source: "data.js fallback",
         error: error.message || String(error)
       };
     }
   }
 
-  window.WorldCup26API = { load };
+  window.WorldCup26API = {
+    load,
+    clearCache() {
+      localStorage.removeItem(CACHE_KEY);
+      return "WC 2026 API cache cleared";
+    },
+    getCache() {
+      try {
+        return JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+      } catch {
+        return null;
+      }
+    }
+  };
 })();

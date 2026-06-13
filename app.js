@@ -686,6 +686,21 @@ async function bootDashboard() {
         renderAlerts();
         renderResults();
         renderTournamentInfo();
+
+        const activeView = document.querySelector(".nav a.active")?.dataset.view;
+        const detailView = document.getElementById("detail-view");
+        if (activeView && activeView !== "dashboard" && detailView?.classList.contains("active")) {
+          detailView.innerHTML = renderDetailView(activeView);
+          detailView.querySelector(".view-back")?.addEventListener("click", () => {
+            document.querySelector('.nav a[data-view="dashboard"]')?.click();
+          });
+          detailView.querySelectorAll("[data-view-target]").forEach(button => {
+            button.addEventListener("click", () => {
+              document.querySelector(`.nav a[data-view="${button.dataset.viewTarget}"]`)?.click();
+            });
+          });
+        }
+
         setTimeout(renderTwemoji, 100);
       })
       .catch(error => {
