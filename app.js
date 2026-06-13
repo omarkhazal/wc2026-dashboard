@@ -210,6 +210,35 @@ function renderTwemoji() {
   }
 }
 
+
+
+function setupNavigation() {
+  const navLinks = document.querySelectorAll(".nav a[href^='#'], .panel-header a[href^='#']");
+
+  navLinks.forEach(link => {
+    link.addEventListener("click", event => {
+      const targetId = link.getAttribute("href");
+      const target = document.querySelector(targetId);
+
+      if (!target) return;
+
+      event.preventDefault();
+
+      document.querySelectorAll(".nav a").forEach(item => item.classList.remove("active"));
+
+      const matchingNav = document.querySelector(`.nav a[href="${targetId}"]`);
+      if (matchingNav) matchingNav.classList.add("active");
+
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      history.replaceState(null, "", targetId);
+    });
+  });
+}
+
 function bootDashboard() {
   updateTournamentStatus();
   renderLiveMatches();
@@ -221,6 +250,7 @@ function bootDashboard() {
   renderAlerts();
   renderResults();
   renderTournamentInfo();
+  setupNavigation();
 
   setTimeout(renderTwemoji, 100);
 }

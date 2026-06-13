@@ -459,3 +459,24 @@ img.emoji {
     display: none;
   }
 }
+
+
+/* v6 navigation pass */
+html {
+  scroll-behavior: smooth;
+}
+
+.top-row,
+.panel {
+  scroll-margin-top: 16px;
+}
+
+.nav a {
+  cursor: pointer;
+}
+
+.panel:target,
+.top-row:target {
+  outline: 1px solid rgba(255, 211, 105, 0.55);
+  box-shadow: 0 0 0 1px rgba(255, 211, 105, 0.18), 0 16px 44px rgba(0,0,0,.35);
+}

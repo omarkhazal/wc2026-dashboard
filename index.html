@@ -16,15 +16,15 @@
       <p>CANADA • MEXICO • USA</p>
     </div>
     <nav class="nav">
-      <a class="active" href="#">⌂ Dashboard</a>
-      <a href="#">🔴 Live Matches</a>
-      <a href="#">📅 Today</a>
-      <a href="#">🏟 Groups</a>
-      <a href="#">🛡 Teams</a>
-      <a href="#">⚔ Bracket</a>
-      <a href="#">📊 Stats</a>
-      <a href="#">🗺 Venues</a>
-      <a href="#">🚨 Alerts</a>
+      <a class="active" href="#dashboard">⌂ Dashboard</a>
+      <a href="#live">🔴 Live Matches</a>
+      <a href="#today">📅 Today</a>
+      <a href="#groups">🏟 Groups</a>
+      <a href="#teams">🛡 Teams</a>
+      <a href="#bracket">⚔ Bracket</a>
+      <a href="#stats">📊 Stats</a>
+      <a href="#venues">🗺 Venues</a>
+      <a href="#alerts">🚨 Alerts</a>
     </nav>
     <div class="date-card">
       <h3>Tournament Dates</h3>
@@ -32,7 +32,7 @@
     </div>
   </aside>
   <main class="main">
-    <section class="top-row">
+    <section class="top-row" id="dashboard">
       <div class="hero-card">
         <div class="hero-trophy">🏆</div>
         <div class="hero-center">
@@ -53,23 +53,23 @@
     </section>
 
     <section class="dashboard-grid">
-      <div class="panel live-panel">
-        <div class="panel-header"><h2><span class="red-dot"></span> Live Matches</h2><a href="#">View all</a></div>
+      <div class="panel live-panel" id="live">
+        <div class="panel-header"><h2><span class="red-dot"></span> Live Matches</h2><a href="#live">View all</a></div>
         <div class="live-games">
           <div class="live-game"><div class="game-meta"><span>Group F</span><strong>65'</strong></div><div class="score-row"><div><div class="flag">🇲🇽</div><p>Mexico</p></div><div class="score">1 - 0</div><div><div class="flag">🇩🇰</div><p>Denmark</p></div></div><div class="venue">📍 AT&T Stadium, Dallas</div></div>
           <div class="live-game"><div class="game-meta"><span>Group E</span><strong>78'</strong></div><div class="score-row"><div><div class="flag">🇯🇵</div><p>Japan</p></div><div class="score">2 - 1</div><div><div class="flag">🇺🇾</div><p>Uruguay</p></div></div><div class="venue">📍 State Farm Stadium, Phoenix</div></div>
         </div>
       </div>
 
-      <div class="panel today-panel">
-        <div class="panel-header"><h2>📅 Today's Matches</h2><a href="#">View all</a></div>
+      <div class="panel today-panel" id="today">
+        <div class="panel-header"><h2>📅 Today's Matches</h2><a href="#today">View all</a></div>
         <div class="fixture"><span class="time">14:00</span><span>🇪🇸 Spain</span><strong>vs</strong><span>🇧🇷 Brazil</span><em>Group C</em></div>
         <div class="fixture"><span class="time">17:00</span><span>🇫🇷 France</span><strong>vs</strong><span>🇺🇸 USA</span><em>Group D</em></div>
         <div class="fixture"><span class="time">20:00</span><span>🇦🇷 Argentina</span><strong>vs</strong><span>🇩🇪 Germany</span><em>Group I</em></div>
       </div>
 
-      <div class="panel standings-panel">
-        <div class="panel-header"><h2>Group Standings</h2><a href="#">View all groups</a></div>
+      <div class="panel standings-panel" id="teams">
+        <div class="panel-header"><h2>Group Standings</h2><a href="#groups">View all groups</a></div>
         <div class="tabs"><span class="active-tab">Group A</span><span>Group B</span><span>Group C</span><span>Group D</span></div>
         <table class="standings-table">
           <thead><tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
@@ -82,28 +82,28 @@
         </table>
       </div>
 
-      <div class="panel scorers-panel">
-        <div class="panel-header"><h2>Top Scorers</h2><a href="#">View all</a></div>
+      <div class="panel scorers-panel" id="stats">
+        <div class="panel-header"><h2>Top Scorers</h2><a href="#stats">View all</a></div>
         <div class="scorer-row"><span>1</span><strong>🇫🇷 K. Mbappé</strong><em>5</em></div>
         <div class="scorer-row"><span>2</span><strong>🏴 H. Kane</strong><em>4</em></div>
         <div class="scorer-row"><span>3</span><strong>🇦🇷 L. Martínez</strong><em>3</em></div>
         <div class="scorer-row"><span>4</span><strong>🇧🇷 Vinícius Jr.</strong><em>3</em></div>
       </div>
 
-      <div class="panel alerts-panel">
-        <div class="panel-header"><h2>🚨 Tournament Alerts</h2><a href="#">View all</a></div>
+      <div class="panel alerts-panel" id="alerts">
+        <div class="panel-header"><h2>🚨 Tournament Alerts</h2><a href="#alerts">View all</a></div>
         <div class="alert critical">🩹 Mbappé doubtful for next match</div>
         <div class="alert warning">🚫 Bellingham suspended</div>
         <div class="alert info">🏟 Host city security update</div>
       </div>
 
-      <div class="panel bracket-panel">
-        <div class="panel-header"><h2>Knockout Bracket</h2><a href="#">View full bracket</a></div>
+      <div class="panel bracket-panel" id="bracket">
+        <div class="panel-header"><h2>Knockout Bracket</h2><a href="#bracket">View full bracket</a></div>
         <div class="bracket"><div class="round"><small>Round of 32</small><span>1A</span><span>2B</span><span>1C</span><span>2D</span></div><div class="connector">›</div><div class="round"><small>Round of 16</small><span></span><span></span></div><div class="connector">›</div><div class="round"><small>Quarter-finals</small><span></span></div><div class="connector">›</div><div class="final">🏆<p>Final</p><small>19 July 2026</small></div></div>
       </div>
 
-      <div class="panel all-groups-panel">
-        <div class="panel-header"><h2>All Groups</h2><a href="#">View all</a></div>
+      <div class="panel all-groups-panel" id="groups">
+        <div class="panel-header"><h2>All Groups</h2><a href="#groups">View all</a></div>
         <div class="group-grid">
           <div class="group-card green"><strong>Group A</strong><span>🇲🇽 🇿🇦 🇰🇷 🇨🇿</span></div>
           <div class="group-card green"><strong>Group B</strong><span>🇨🇦 🇨🇭 🇶🇦 🇧🇦</span></div>
@@ -129,8 +129,8 @@
         <div class="info-row"><span>Matches</span><strong>104</strong></div>
       </div>
 
-      <div class="panel venue-panel">
-        <div class="panel-header"><h2>Venue Map</h2><a href="#">View full map</a></div>
+      <div class="panel venue-panel" id="venues">
+        <div class="panel-header"><h2>Venue Map</h2><a href="#venues">View full map</a></div>
         <div class="map"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span><span class="dot d5"></span><span class="dot d6"></span><span class="dot d7"></span><span class="dot d8"></span></div>
         <div class="venue-list"><p><span class="green-dot"></span> MetLife Stadium — East Rutherford</p><p><span class="orange-dot"></span> AT&T Stadium — Dallas</p><p><span class="blue-dot"></span> BC Place — Vancouver</p></div>
       </div>
