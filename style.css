@@ -822,3 +822,18 @@ html {
   border-color: rgba(66, 211, 146, .25);
   background: rgba(66, 211, 146, .09);
 }
+
+
+/* v17: prevent old hard-coded placeholder panels from flashing before JS/API render */
+body:not(.dashboard-ready) .top-row,
+body:not(.dashboard-ready) .dashboard-grid,
+body:not(.dashboard-ready) .detail-view {
+  opacity: 0;
+}
+
+body.dashboard-ready .top-row,
+body.dashboard-ready .dashboard-grid,
+body.dashboard-ready .detail-view {
+  opacity: 1;
+  transition: opacity .18s ease;
+}

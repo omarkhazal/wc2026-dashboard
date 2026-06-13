@@ -590,6 +590,7 @@ async function bootDashboard() {
   renderTournamentInfo();
   setupNavigation();
 
+  document.body.classList.add("dashboard-ready");
   setTimeout(renderTwemoji, 100);
 }
 
@@ -610,4 +611,4 @@ async function refreshDashboardData() {
 
 bootDashboard();
 setInterval(updateTournamentStatus, 1000);
-setInterval(refreshDashboardData, 30000);
+// API data loads once on page load. Auto-refresh disabled to prevent visual jumping.

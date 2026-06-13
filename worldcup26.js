@@ -327,33 +327,11 @@
   function applyTeams(teams) {
     if (!Array.isArray(teams) || !teams.length) return 0;
 
-    const groups = {};
-
-    teams.forEach(team => {
-      const letter = groupLetter(team.groups || team.group || team.group_name || team.groupName);
-      if (!letter) return;
-
-      if (!groups[letter]) groups[letter] = [];
-
-      const code = teamCode(team);
-      const local = findLocalTeamByCode(code);
-
-      groups[letter].push({
-        code: code || local?.code || "",
-        name: teamName(team),
-        flag: local?.flag || "",
-        p: local?.p ?? 0,
-        gd: local?.gd ?? "0",
-        pts: local?.pts ?? 0
-      });
-    });
-
-    Object.entries(groups).forEach(([letter, groupTeams]) => {
-      if (groupTeams.length === 4 && WC_DATA.groups[letter]) {
-        WC_DATA.groups[letter] = sortTableRows(groupTeams);
-      }
-    });
-
+    // Important:
+    // The /teams endpoint is group composition, not live standings.
+    // Do NOT overwrite WC_DATA.groups here, because that can reorder standings
+    // a few seconds after page load. Standings stay in data.js until a proper
+    // standings endpoint/normalizer is connected.
     return teams.length;
   }
 
