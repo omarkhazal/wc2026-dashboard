@@ -1,241 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>World Cup 2026 Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
 <div class="app">
-
   <aside class="sidebar">
-    <div class="logo">
-      🏆
-      <h2>WC 2026</h2>
+    <div class="brand">
+      <div class="trophy">🏆</div>
+      <h1>FIFA WORLD CUP</h1>
+      <div class="year">2026</div>
+      <p>CANADA • MEXICO • USA</p>
     </div>
-
-    <nav>
-      <a href="#">Dashboard</a>
-      <a href="#">Live Matches</a>
-      <a href="#">Groups</a>
-      <a href="#">Teams</a>
-      <a href="#">Bracket</a>
-      <a href="#">Venues</a>
-      <a href="#">Stats</a>
+    <nav class="nav">
+      <a class="active" href="#">⌂ Dashboard</a>
+      <a href="#">🔴 Live Matches</a>
+      <a href="#">📅 Today</a>
+      <a href="#">🏟 Groups</a>
+      <a href="#">🛡 Teams</a>
+      <a href="#">⚔ Bracket</a>
+      <a href="#">📊 Stats</a>
+      <a href="#">🗺 Venues</a>
+      <a href="#">🚨 Alerts</a>
     </nav>
+    <div class="date-card">
+      <h3>Tournament Dates</h3>
+      <p>11 June 2026</p><span>to</span><p>19 July 2026</p>
+    </div>
   </aside>
+  <main class="main">
+    <section class="top-row">
+      <div class="hero-card">
+        <div class="hero-trophy">🏆</div>
+        <div class="hero-center">
+          <h2 id="hero-label">TOURNAMENT STATUS</h2>
+          <div class="countdown" id="countdown">Loading <span>status</span></div>
+          <p id="hero-subtitle">11 JUNE — 19 JULY 2026</p>
+        </div>
+        <div class="host-flags">
+          <div>🇨🇦 <span>Canada</span></div>
+          <div>🇲🇽 <span>Mexico</span></div>
+          <div>🇺🇸 <span>USA</span></div>
+        </div>
+      </div>
+      <div class="kpi blue"><span>⚽</span><h3>Matches</h3><strong>104</strong><p>Total</p></div>
+      <div class="kpi gold"><span>👥</span><h3>Teams</h3><strong>48</strong><p>Qualified</p></div>
+      <div class="kpi green"><span>🏟</span><h3>Venues</h3><strong>16</strong><p>Stadiums</p></div>
+      <div class="kpi purple"><span>🧩</span><h3>Groups</h3><strong>12</strong><p>Groups</p></div>
+    </section>
 
-  <main>
-
-    <section class="hero">
-      <div>
-        <h1>FIFA World Cup 2026</h1>
-        <p>Canada • Mexico • USA</p>
+    <section class="dashboard-grid">
+      <div class="panel live-panel">
+        <div class="panel-header"><h2><span class="red-dot"></span> Live Matches</h2><a href="#">View all</a></div>
+        <div class="live-games">
+          <div class="live-game"><div class="game-meta"><span>Group F</span><strong>65'</strong></div><div class="score-row"><div><div class="flag">🇲🇽</div><p>Mexico</p></div><div class="score">1 - 0</div><div><div class="flag">🇩🇰</div><p>Denmark</p></div></div><div class="venue">📍 AT&T Stadium, Dallas</div></div>
+          <div class="live-game"><div class="game-meta"><span>Group E</span><strong>78'</strong></div><div class="score-row"><div><div class="flag">🇯🇵</div><p>Japan</p></div><div class="score">2 - 1</div><div><div class="flag">🇺🇾</div><p>Uruguay</p></div></div><div class="venue">📍 State Farm Stadium, Phoenix</div></div>
+        </div>
       </div>
 
-      <div id="countdown"></div>
+      <div class="panel today-panel">
+        <div class="panel-header"><h2>📅 Today's Matches</h2><a href="#">View all</a></div>
+        <div class="fixture"><span class="time">14:00</span><span>🇪🇸 Spain</span><strong>vs</strong><span>🇧🇷 Brazil</span><em>Group C</em></div>
+        <div class="fixture"><span class="time">17:00</span><span>🇫🇷 France</span><strong>vs</strong><span>🇺🇸 USA</span><em>Group D</em></div>
+        <div class="fixture"><span class="time">20:00</span><span>🇦🇷 Argentina</span><strong>vs</strong><span>🇩🇪 Germany</span><em>Group I</em></div>
+      </div>
+
+      <div class="panel standings-panel">
+        <div class="panel-header"><h2>Group Standings</h2><a href="#">View all groups</a></div>
+        <div class="tabs"><span class="active-tab">Group A</span><span>Group B</span><span>Group C</span><span>Group D</span></div>
+        <table class="standings-table">
+          <thead><tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
+          <tbody>
+            <tr><td><b>1</b></td><td>🇲🇽 Mexico</td><td>2</td><td>+3</td><td>6</td></tr>
+            <tr><td><b>2</b></td><td>🇳🇱 Netherlands</td><td>2</td><td>+1</td><td>3</td></tr>
+            <tr><td><b>3</b></td><td>🇸🇳 Senegal</td><td>2</td><td>0</td><td>3</td></tr>
+            <tr><td><b>4</b></td><td>🇪🇨 Ecuador</td><td>2</td><td>-4</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel scorers-panel">
+        <div class="panel-header"><h2>Top Scorers</h2><a href="#">View all</a></div>
+        <div class="scorer-row"><span>1</span><strong>🇫🇷 K. Mbappé</strong><em>5</em></div>
+        <div class="scorer-row"><span>2</span><strong>🏴 H. Kane</strong><em>4</em></div>
+        <div class="scorer-row"><span>3</span><strong>🇦🇷 L. Martínez</strong><em>3</em></div>
+        <div class="scorer-row"><span>4</span><strong>🇧🇷 Vinícius Jr.</strong><em>3</em></div>
+      </div>
+
+      <div class="panel alerts-panel">
+        <div class="panel-header"><h2>🚨 Tournament Alerts</h2><a href="#">View all</a></div>
+        <div class="alert critical">🩹 Mbappé doubtful for next match</div>
+        <div class="alert warning">🚫 Bellingham suspended</div>
+        <div class="alert info">🏟 Host city security update</div>
+      </div>
+
+      <div class="panel bracket-panel">
+        <div class="panel-header"><h2>Knockout Bracket</h2><a href="#">View full bracket</a></div>
+        <div class="bracket"><div class="round"><small>Round of 32</small><span>1A</span><span>2B</span><span>1C</span><span>2D</span></div><div class="connector">›</div><div class="round"><small>Round of 16</small><span></span><span></span></div><div class="connector">›</div><div class="round"><small>Quarter-finals</small><span></span></div><div class="connector">›</div><div class="final">🏆<p>Final</p><small>19 July 2026</small></div></div>
+      </div>
+
+      <div class="panel all-groups-panel">
+        <div class="panel-header"><h2>All Groups</h2><a href="#">View all</a></div>
+        <div class="group-grid">
+          <div class="group-card green"><strong>Group A</strong><span>🇲🇽 🇿🇦 🇰🇷 🇨🇿</span></div>
+          <div class="group-card green"><strong>Group B</strong><span>🇨🇦 🇨🇭 🇶🇦 🇧🇦</span></div>
+          <div class="group-card orange"><strong>Group C</strong><span>🇧🇷 🇲🇦 🇭🇹 🏴</span></div>
+          <div class="group-card blue"><strong>Group D</strong><span>🇺🇸 🇵🇾 🇦🇺 🇹🇷</span></div>
+          <div class="group-card green"><strong>Group E</strong><span>🇩🇪 🇨🇼 🇨🇮 🇪🇨</span></div>
+          <div class="group-card green"><strong>Group F</strong><span>🇳🇱 🇯🇵 🇹🇳 🇸🇪</span></div>
+          <div class="group-card red"><strong>Group G</strong><span>🇧🇪 🇪🇬 🇮🇷 🇳🇿</span></div>
+          <div class="group-card blue"><strong>Group H</strong><span>🇪🇸 🇨🇻 🇸🇦 🇺🇾</span></div>
+          <div class="group-card green"><strong>Group I</strong><span>🇫🇷 🇸🇳 🇮🇶 🇳🇴</span></div>
+          <div class="group-card orange"><strong>Group J</strong><span>🇦🇷 🇩🇿 🇦🇹 🇯🇴</span></div>
+          <div class="group-card red"><strong>Group K</strong><span>🇵🇹 🇨🇩 🇺🇿 🇨🇴</span></div>
+          <div class="group-card blue"><strong>Group L</strong><span>🏴 🇭🇷 🇬🇭 🇵🇦</span></div>
+        </div>
+      </div>
+
+      <div class="panel info-panel">
+        <h2>Tournament Info</h2>
+        <div class="info-row"><span>Host Countries</span><strong>🇨🇦 🇲🇽 🇺🇸</strong></div>
+        <div class="info-row"><span>Start Date</span><strong>11 June 2026</strong></div>
+        <div class="info-row"><span>End Date</span><strong>19 July 2026</strong></div>
+        <div class="info-row"><span>Teams</span><strong>48</strong></div>
+        <div class="info-row"><span>Matches</span><strong>104</strong></div>
+      </div>
+
+      <div class="panel venue-panel">
+        <div class="panel-header"><h2>Venue Map</h2><a href="#">View full map</a></div>
+        <div class="map"><span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span><span class="dot d5"></span><span class="dot d6"></span><span class="dot d7"></span><span class="dot d8"></span></div>
+        <div class="venue-list"><p><span class="green-dot"></span> MetLife Stadium — East Rutherford</p><p><span class="orange-dot"></span> AT&T Stadium — Dallas</p><p><span class="blue-dot"></span> BC Place — Vancouver</p></div>
+      </div>
+
+      <div class="panel results-panel">
+        <div class="panel-header"><h2>Recent Results</h2><a href="#">View all</a></div>
+        <div class="result-row"><span>🇺🇸 USA</span><strong>3 - 1</strong><span>🇨🇱 Chile</span></div>
+        <div class="result-row"><span>🏴 England</span><strong>2 - 0</strong><span>🇦🇺 Australia</span></div>
+        <div class="result-row"><span>🇧🇷 Brazil</span><strong>4 - 0</strong><span>🇭🇳 Honduras</span></div>
+      </div>
     </section>
-
-    <section class="grid">
-
-     <div class="card focus-match">
-
-  <div class="live-badge">
-    🔴 LIVE
-  </div>
-
-  <h2>Quarter Final</h2>
-
-  <div class="team-row">
-    <span>🇫🇷 France</span>
-    <strong>2</strong>
-  </div>
-
-  <div class="team-row">
-    <span>🇦🇷 Argentina</span>
-    <strong>1</strong>
-  </div>
-
-  <div class="match-minute">
-    74'
-  </div>
-
-  <div class="stadium">
-    🏟 MetLife Stadium
-  </div>
-
-</div>
-
-   <div class="card">
-
-  <h2>📅 Today's Matches</h2>
-
-  <div class="fixture-card">
-
-    <div class="fixture-time">
-      18:00
-    </div>
-
-    <div class="fixture-teams">
-      🇪🇸 Spain vs Brazil 🇧🇷
-    </div>
-
-    <div class="fixture-meta">
-      Quarter Final • MetLife Stadium
-    </div>
-
-  </div>
-
-  <div class="fixture-card">
-
-    <div class="fixture-time">
-      21:00
-    </div>
-
-    <div class="fixture-teams">
-      🇫🇷 France vs USA 🇺🇸
-    </div>
-
-    <div class="fixture-meta">
-      Quarter Final • SoFi Stadium
-    </div>
-
-  </div>
-
-  <div class="fixture-card">
-
-    <div class="fixture-time">
-      23:00
-    </div>
-
-    <div class="fixture-teams">
-      🇦🇷 Argentina vs Germany 🇩🇪
-    </div>
-
-    <div class="fixture-meta">
-      Quarter Final • AT&T Stadium
-    </div>
-
-  </div>
-
-</div>
-
-      <div class="card groups-card">
-
-  <h2>🏆 Groups</h2>
-
-  <div class="groups-grid">
-
-  <div class="group-tile">
-    <span>A</span>
-    <small>🇲🇽 Mexico</small>
-  </div>
-
-  <div class="group-tile">
-    <span>B</span>
-    <small>🇧🇷 Brazil</small>
-  </div>
-
-  <div class="group-tile">
-    <span>C</span>
-    <small>🇫🇷 France</small>
-  </div>
-
-  <div class="group-tile">
-    <span>D</span>
-    <small>🇦🇷 Argentina</small>
-  </div>
-
-  <div class="group-tile">
-    <span>E</span>
-    <small>🇪🇸 Spain</small>
-  </div>
-
-  <div class="group-tile">
-    <span>F</span>
-    <small>🇩🇪 Germany</small>
-  </div>
-
-  <div class="group-tile">
-    <span>G</span>
-    <small>🇯🇵 Japan</small>
-  </div>
-
-  <div class="group-tile">
-    <span>H</span>
-    <small>🇺🇸 USA</small>
-  </div>
-
-</div>
-</div>
-  <div class="card">
-
-  <h2>🥇 Top Scorers</h2>
-
-  <div class="scorer">
-    <span>🇫🇷 Mbappé</span>
-    <strong>6</strong>
-  </div>
-
-  <div class="scorer">
-    <span>🇳🇴 Haaland</span>
-    <strong>5</strong>
-  </div>
-
-  <div class="scorer">
-    <span>🇬🇧 Kane</span>
-    <strong>4</strong>
-  </div>
-
-</div>
-</div>
-<div class="card alerts-card">
-
-  <h2>🚨 Tournament Alerts</h2>
-
-  <div class="alert critical">
-    🩹 Mbappé doubtful for next match
-  </div>
-
-  <div class="alert important">
-    🚫 Bellingham suspended
-  </div>
-
-  <div class="alert info">
-    🏟 Host city security update
-  </div>
-
-</div>
-<div class="card">
-
-  <h2>📈 Recent Results</h2>
-
-  <div class="match">
-    🇺🇸 USA 3–1 Chile
-  </div>
-
-  <div class="match">
-    🇧🇷 Brazil 4–0 Honduras
-  </div>
-
-  <div class="match">
-    🇫🇷 France 2–1 Argentina
-  </div>
-
-  <div class="match">
-    🇪🇸 Spain 1–0 Japan
-  </div>
-
-</div>
-    </section>
-
   </main>
-
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
 <script src="app.js"></script>
-
 </body>
 </html>
