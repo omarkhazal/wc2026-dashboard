@@ -309,6 +309,21 @@
     });
   }
 
+  function numericGoalDifference(value) {
+    const parsed = Number(String(value ?? "0").replace("+", ""));
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  function sortTableRows(rows) {
+    return [...rows].sort((a, b) => {
+      return (
+        (Number(b.pts) || 0) - (Number(a.pts) || 0) ||
+        numericGoalDifference(b.gd) - numericGoalDifference(a.gd) ||
+        String(a.name).localeCompare(String(b.name))
+      );
+    });
+  }
+
   function applyTeams(teams) {
     if (!Array.isArray(teams) || !teams.length) return 0;
 
@@ -335,7 +350,7 @@
 
     Object.entries(groups).forEach(([letter, groupTeams]) => {
       if (groupTeams.length === 4 && WC_DATA.groups[letter]) {
-        WC_DATA.groups[letter] = groupTeams;
+        WC_DATA.groups[letter] = sortTableRows(groupTeams);
       }
     });
 
