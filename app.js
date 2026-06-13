@@ -161,14 +161,11 @@ function renderScorers() {
   panel.querySelectorAll(".scorer-row, .empty-state").forEach(item => item.remove());
 
   if (!WC_DATA.scorers.length) {
-    panel.insertAdjacentHTML("beforeend", `
-      <div class="empty-state">
-        <strong>Top scorers will appear here.</strong><br>
-        No fake player stats are shown in the clean-data version.
-      </div>
-    `);
+    panel.hidden = true;
     return;
   }
+
+  panel.hidden = false;
 
   WC_DATA.scorers.forEach(player => {
     panel.insertAdjacentHTML("beforeend", `
@@ -473,7 +470,7 @@ function renderDetailView(view) {
     groups: ["Groups", "All 12 groups with compact tables and clickable group cards."],
     bracket: ["Bracket", "Expanded knockout map inspired by tournament bracket pages."],
     teams: ["Teams", "Team hub for all 48 teams, grouped and sortable later."],
-    players: ["Players", "Player stats page prepared for scorers, assists, cards, and ratings."],
+    players: ["Stats", "Tournament metrics and player-stat modules, without fake data."],
     venues: ["Venues", "Host city and stadium overview for the 16 World Cup venues."],
     alerts: ["Alerts", "Forza-style high-signal tournament updates only."]
   };
@@ -737,7 +734,11 @@ function renderBracketPage() {
 }
 
 function renderPlayersPage() {
-  const scorersBlock = WC_DATA.scorers.length
+  const hasScorers = WC_DATA.scorers.length > 0;
+  const apiAlert = (WC_DATA.alerts || []).find(alert => alert.apiSource);
+  const metrics = WC_DATA.tournament.metrics;
+
+  const scorersBlock = hasScorers
     ? `
       <table class="view-table">
         <thead><tr><th>#</th><th>Player</th><th>Goals</th></tr></thead>
@@ -748,14 +749,41 @@ function renderPlayersPage() {
         </tbody>
       </table>
     `
-    : `<div class="empty-state"><strong>No player stats yet.</strong><br>Scorers, assists, cards and ratings will appear when the API provides player-level data.</div>`;
+    : `
+      <div class="stat-pending-box">
+        <strong>Player-level stats are not connected yet.</strong>
+        <p>No fake scorer, assist, card, or rating data is shown.</p>
+      </div>
+    `;
 
   return `
+    <div class="stats-command-grid">
+      <div><strong>${metrics.teams}</strong><span>Teams</span></div>
+      <div><strong>${metrics.matches}</strong><span>Matches</span></div>
+      <div><strong>${metrics.groups}</strong><span>Groups</span></div>
+      <div><strong>${metrics.venues}</strong><span>Venues</span></div>
+    </div>
+
     <div class="view-grid">
-      <div class="view-card wide"><h3>Top scorers</h3>${scorersBlock}</div>
-      <div class="view-card wide"><h3>Assists</h3><div class="empty-state">Prepared for assist leaders.</div></div>
-      <div class="view-card wide"><h3>Cards</h3><div class="empty-state">Prepared for yellow/red card leaders.</div></div>
-      <div class="view-card wide"><h3>Ratings</h3><div class="empty-state">Prepared for player ratings if connected later.</div></div>
+      <div class="view-card wide">
+        <h3>Top scorers</h3>
+        ${scorersBlock}
+      </div>
+
+      <div class="view-card wide">
+        <h3>Data status</h3>
+        <p>${apiAlert ? apiAlert.text : "Using local fallback data. Live API status will appear here after sync."}</p>
+      </div>
+
+      <div class="view-card wide stat-module-card muted">
+        <h3>Team stats</h3>
+        <p>Prepared for goals for/against, clean sheets, shots, possession, and cards when available.</p>
+      </div>
+
+      <div class="view-card wide stat-module-card muted">
+        <h3>Player stats</h3>
+        <p>Prepared for scorers, assists, cards, minutes, and ratings once a player-stat source is connected.</p>
+      </div>
     </div>
   `;
 }

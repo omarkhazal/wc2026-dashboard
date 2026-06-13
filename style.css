@@ -1872,3 +1872,61 @@ body:not(.dashboard-ready) .detail-view {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* v33 Stats cleanup */
+.scorers-panel[hidden] {
+  display: none !important;
+}
+
+.stats-command-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stats-command-grid div {
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.045);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.stats-command-grid strong {
+  display: block;
+  color: #fff;
+  font-size: 1.35rem;
+}
+
+.stats-command-grid span {
+  color: #92a2d5;
+  font-size: .74rem;
+}
+
+.stat-pending-box {
+  border: 1px dashed rgba(255,255,255,.18);
+  background: rgba(255,255,255,.035);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.stat-pending-box strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.stat-pending-box p,
+.stat-module-card p {
+  color: #b9c5e8;
+}
+
+.stat-module-card.muted {
+  opacity: .86;
+}
+
+@media (max-width: 900px) {
+  .stats-command-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
