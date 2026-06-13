@@ -662,25 +662,76 @@ function renderTeamsPage() {
 }
 
 function renderBracketPage() {
-  const columns = [
-    ["Round of 32", "1A vs 2B", "1C vs 2D", "1E vs 2F", "1G vs 2H", "1I vs 2J", "1K vs 2L"],
-    ["Round of 16", "Winner path", "Winner path", "Winner path", "Winner path"],
-    ["Quarter-finals", "QF 1", "QF 2", "QF 3", "QF 4"],
-    ["Semi-finals", "SF 1", "SF 2"],
-    ["Final", "🏆 19 July 2026"]
+  const rounds = [
+    {
+      title: "Round of 32",
+      subtitle: "16 matches",
+      slots: [
+        "1A vs 2B", "1C vs 2D", "1E vs 2F", "1G vs 2H",
+        "1I vs 2J", "1K vs 2L", "1B vs 3rd", "1D vs 3rd",
+        "1F vs 3rd", "1H vs 3rd", "1J vs 3rd", "1L vs 3rd",
+        "2A vs 2C", "2E vs 2G", "2I vs 2K", "Best remaining"
+      ]
+    },
+    {
+      title: "Round of 16",
+      subtitle: "8 matches",
+      slots: Array.from({ length: 8 }, (_, index) => `R16 ${index + 1}`)
+    },
+    {
+      title: "Quarter-finals",
+      subtitle: "4 matches",
+      slots: Array.from({ length: 4 }, (_, index) => `QF ${index + 1}`)
+    },
+    {
+      title: "Semi-finals",
+      subtitle: "2 matches",
+      slots: ["SF 1", "SF 2"]
+    },
+    {
+      title: "Finals",
+      subtitle: "2 matches",
+      slots: ["🥉 Third-place match", "🏆 Final · 19 July 2026"]
+    }
   ];
 
   return `
-    <div class="view-card full">
-      <div class="bracket-detail app-bracket">
-        ${columns.map(column => `
-          <div class="bracket-column">
-            <h3>${column[0]}</h3>
-            ${column.slice(1).map(slot => `<div class="bracket-slot">${slot}</div>`).join("")}
+    <div class="view-toolbar bracket-toolbar">
+      <span>Expanded knockout map</span>
+      <span>Round of 32 → Final</span>
+      <span>Teams fill after group stage</span>
+    </div>
+
+    <div class="bracket-shell">
+      ${rounds.map(round => `
+        <section class="bracket-stage">
+          <div class="bracket-stage-head">
+            <h3>${round.title}</h3>
+            <span>${round.subtitle}</span>
           </div>
-        `).join("")}
+
+          <div class="bracket-slot-list">
+            ${round.slots.map((slot, index) => `
+              <div class="bracket-match-slot">
+                <small>${round.title === "Finals" ? "Match" : `Match ${index + 1}`}</small>
+                <strong>${slot}</strong>
+                <em>Pending</em>
+              </div>
+            `).join("")}
+          </div>
+        </section>
+      `).join("")}
+    </div>
+
+    <div class="view-grid bracket-info-grid">
+      <div class="view-card wide">
+        <h3>How this will work</h3>
+        <p>The bracket stays as seeded placeholders until group qualification is known. Once the source has knockout match data, these slots can become real match cards.</p>
       </div>
-      <div class="route-note">Bracket seeding stays placeholder until group qualification is mathematically known.</div>
+      <div class="view-card wide">
+        <h3>What comes next</h3>
+        <p>We can later add path highlighting for your favorite team, host country badges, venue names, and winner connectors.</p>
+      </div>
     </div>
   `;
 }

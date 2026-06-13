@@ -1676,3 +1676,91 @@ body:not(.dashboard-ready) .detail-view {
 .favorite-panel[hidden] {
   display: none !important;
 }
+
+
+/* v29 Bracket page polish */
+.bracket-shell {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.35fr) repeat(4, minmax(190px, 1fr));
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.bracket-stage {
+  min-width: 190px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(10,18,37,.70);
+  border-radius: 18px;
+  padding: 12px;
+}
+
+.bracket-stage:first-child {
+  min-width: 280px;
+}
+
+.bracket-stage-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.bracket-stage-head h3 {
+  margin: 0;
+  color: #fff;
+  font-size: .9rem;
+}
+
+.bracket-stage-head span {
+  color: #92a2d5;
+  font-size: .68rem;
+}
+
+.bracket-slot-list {
+  display: grid;
+  gap: 8px;
+}
+
+.bracket-stage:first-child .bracket-slot-list {
+  grid-template-columns: 1fr 1fr;
+}
+
+.bracket-match-slot {
+  border: 1px solid rgba(255,255,255,.08);
+  background:
+    linear-gradient(135deg, rgba(105,40,232,.18), rgba(255,255,255,.035));
+  border-radius: 13px;
+  padding: 9px;
+  min-height: 66px;
+}
+
+.bracket-match-slot small,
+.bracket-match-slot em {
+  display: block;
+  color: #92a2d5;
+  font-size: .64rem;
+  font-style: normal;
+}
+
+.bracket-match-slot strong {
+  display: block;
+  margin: 5px 0;
+  color: #fff;
+  font-size: .76rem;
+}
+
+.bracket-info-grid {
+  margin-top: 12px;
+}
+
+@media (max-width: 1100px) {
+  .bracket-shell {
+    grid-template-columns: repeat(5, minmax(220px, 1fr));
+  }
+
+  .bracket-stage:first-child .bracket-slot-list {
+    grid-template-columns: 1fr;
+  }
+}
