@@ -480,3 +480,50 @@ html {
   outline: 1px solid rgba(255, 211, 105, 0.55);
   box-shadow: 0 0 0 1px rgba(255, 211, 105, 0.18), 0 16px 44px rgba(0,0,0,.35);
 }
+
+
+/* v7 scroll-container fix
+   The dashboard main area is now the scrollable area, so sidebar navigation visibly moves to sections. */
+.main {
+  height: 100vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.main::-webkit-scrollbar {
+  width: 9px;
+}
+
+.main::-webkit-scrollbar-track {
+  background: rgba(255,255,255,.04);
+}
+
+.main::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.18);
+  border-radius: 999px;
+}
+
+.nav a.active {
+  background: linear-gradient(135deg,#8c4cff,#352071);
+}
+
+.nav-flash {
+  animation: navFlash 1.05s ease;
+}
+
+@keyframes navFlash {
+  0% {
+    outline: 1px solid rgba(255, 211, 105, 0.9);
+    box-shadow: 0 0 0 1px rgba(255, 211, 105, 0.35), 0 0 32px rgba(255, 211, 105, 0.18);
+  }
+  100% {
+    outline: 1px solid rgba(255, 211, 105, 0);
+  }
+}
+
+@media (max-width: 900px) {
+  .main {
+    height: auto;
+    overflow-y: visible;
+  }
+}

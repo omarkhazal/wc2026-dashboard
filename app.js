@@ -214,6 +214,7 @@ function renderTwemoji() {
 
 function setupNavigation() {
   const navLinks = document.querySelectorAll(".nav a[href^='#'], .panel-header a[href^='#']");
+  const main = document.querySelector(".main");
 
   navLinks.forEach(link => {
     link.addEventListener("click", event => {
@@ -229,10 +230,22 @@ function setupNavigation() {
       const matchingNav = document.querySelector(`.nav a[href="${targetId}"]`);
       if (matchingNav) matchingNav.classList.add("active");
 
-      target.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
+      if (main && getComputedStyle(main).overflowY !== "visible") {
+        const targetTop = target.offsetTop - main.offsetTop;
+        main.scrollTo({
+          top: Math.max(targetTop - 8, 0),
+          behavior: "smooth"
+        });
+      } else {
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
+
+      document.querySelectorAll(".nav-flash").forEach(item => item.classList.remove("nav-flash"));
+      target.classList.add("nav-flash");
+      window.setTimeout(() => target.classList.remove("nav-flash"), 1100);
 
       history.replaceState(null, "", targetId);
     });
