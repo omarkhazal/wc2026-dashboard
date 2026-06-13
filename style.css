@@ -2229,3 +2229,62 @@ body:not(.dashboard-ready) .detail-view {
     grid-column: span 12;
   }
 }
+
+
+/* v38 Make API status obvious */
+.hero-card {
+  position: relative;
+}
+
+.hero-data-badge {
+  position: absolute;
+  left: 18px;
+  bottom: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100% - 36px);
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(7,12,28,.72);
+  backdrop-filter: blur(10px);
+  border-radius: 999px;
+  padding: 8px 11px;
+  color: #d9e2ff;
+  font-size: .72rem;
+  box-shadow: 0 10px 26px rgba(0,0,0,.18);
+}
+
+.hero-data-badge strong {
+  color: #fff;
+  white-space: nowrap;
+}
+
+.hero-data-badge span {
+  color: #92a2d5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hero-data-badge.live {
+  border-color: rgba(66,211,146,.35);
+  background: rgba(66,211,146,.11);
+}
+
+.hero-data-badge.cache {
+  border-color: rgba(255,211,105,.35);
+  background: rgba(255,211,105,.11);
+}
+
+.hero-data-badge.fallback {
+  border-color: rgba(255,99,132,.35);
+  background: rgba(255,99,132,.11);
+}
+
+@media (max-width: 900px) {
+  .hero-data-badge {
+    position: static;
+    margin-top: 14px;
+    justify-self: center;
+  }
+}

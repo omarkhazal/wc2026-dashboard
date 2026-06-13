@@ -279,6 +279,30 @@ function renderDataPanel() {
   `;
 }
 
+function renderHeroDataBadge() {
+  const badge = document.getElementById("hero-data-badge");
+  if (!badge) return;
+
+  const meta = WC_DATA.apiMeta || {
+    mode: "boot",
+    source: "starting",
+    games: (WC_DATA.allMatches || []).length || WC_DATA.tournament.metrics.matches
+  };
+
+  const labels = {
+    live: "🟢 Live API",
+    cache: "🟡 Saved cache",
+    fallback: "🔴 Local fallback",
+    boot: "⚪ Starting"
+  };
+
+  badge.className = `hero-data-badge ${meta.mode || "boot"}`;
+  badge.innerHTML = `
+    <strong>${labels[meta.mode] || "Data layer"}</strong>
+    <span>${meta.source || "loading"} · ${meta.games || 0} games</span>
+  `;
+}
+
 function renderFavoritePanel() {
   const panel = document.querySelector(".favorite-panel-body");
   const wrapper = document.querySelector(".favorite-panel");
@@ -1184,6 +1208,7 @@ async function bootDashboard() {
         renderResults();
         renderTournamentInfo();
         renderDataPanel();
+        renderHeroDataBadge();
         renderFavoritePanel();
         renderFavoriteTeamChip();
 
