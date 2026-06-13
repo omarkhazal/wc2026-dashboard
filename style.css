@@ -2288,3 +2288,19 @@ body:not(.dashboard-ready) .detail-view {
     justify-self: center;
   }
 }
+
+
+/* v39 Logo goes home */
+.clickable-brand {
+  cursor: pointer;
+  border-radius: 20px;
+  transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.clickable-brand:hover,
+.clickable-brand:focus-visible {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.045);
+  box-shadow: 0 12px 32px rgba(0,0,0,.18);
+  outline: 1px solid rgba(255,211,105,.22);
+}
