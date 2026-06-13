@@ -242,6 +242,60 @@ function renderTwemoji() {
 
 
 
+function getAllTeams() {
+  return Object.entries(WC_DATA.groups || {}).flatMap(([group, teams]) =>
+    teams.map(team => ({ ...team, group }))
+  );
+}
+
+function getAllMatches() {
+  if (Array.isArray(WC_DATA.allMatches) && WC_DATA.allMatches.length) {
+    return WC_DATA.allMatches;
+  }
+
+  const upcoming = (WC_DATA.todayMatches || []).map(match => ({
+    dateLabel: "Today",
+    time: match.time || "--:--",
+    home: match.home,
+    away: match.away,
+    group: match.group || "World Cup",
+    status: match.status || "Upcoming",
+    score: match.status && match.status.includes("-") ? match.status : "vs",
+    venue: "",
+    isLive: false,
+    isFinished: false
+  }));
+
+  const recent = (WC_DATA.recentResults || []).map(match => ({
+    dateLabel: "Recent",
+    time: "FT",
+    home: match.home,
+    away: match.away,
+    group: "Result",
+    status: "FT",
+    score: match.score,
+    venue: "",
+    isLive: false,
+    isFinished: true
+  }));
+
+  return [...upcoming, ...recent];
+}
+
+function getFeaturedMatch() {
+  const matches = getAllMatches();
+  return matches.find(match => match.isLive) ||
+    matches.find(match => !match.isFinished) ||
+    matches[0] ||
+    null;
+}
+
+function renderStatusPill(status) {
+  const value = String(status || "Upcoming");
+  const kind = value.includes("LIVE") ? "live" : value.includes("FT") ? "done" : "upcoming";
+  return `<span class="status-pill ${kind}">${value}</span>`;
+}
+
 function setupNavigation() {
   const links = document.querySelectorAll(".nav a[data-view], .panel-header a[href^='#']");
   const topRow = document.querySelector(".top-row");
@@ -250,15 +304,18 @@ function setupNavigation() {
   const main = document.querySelector(".main");
 
   const routeMap = {
-    "#live": "live",
-    "#today": "today",
+    "#matches": "matches",
+    "#matchcenter": "matchcenter",
     "#groups": "groups",
-    "#teams": "teams",
     "#bracket": "bracket",
-    "#stats": "stats",
+    "#teams": "teams",
+    "#players": "players",
+    "#stats": "players",
     "#venues": "venues",
     "#alerts": "alerts",
-    "#dashboard": "dashboard"
+    "#dashboard": "dashboard",
+    "#live": "matches",
+    "#today": "matches"
   };
 
   function setActive(view) {
@@ -293,19 +350,19 @@ function setupNavigation() {
     detailView.classList.add("active");
     setActive(view);
 
-    const backButton = detailView.querySelector(".view-back");
-    if (backButton) {
-      backButton.addEventListener("click", openDashboard);
-    }
+    detailView.querySelectorAll("[data-view-target]").forEach(button => {
+      button.addEventListener("click", () => openView(button.dataset.viewTarget));
+    });
 
-    if (view === "groups") {
-      detailView.querySelectorAll("[data-open-group]").forEach(card => {
-        card.addEventListener("click", () => {
-          renderStandings(card.dataset.openGroup);
-          openView("teams");
-        });
+    detailView.querySelectorAll("[data-open-group]").forEach(card => {
+      card.addEventListener("click", () => {
+        renderStandings(card.dataset.openGroup);
+        openView("teams");
       });
-    }
+    });
+
+    const backButton = detailView.querySelector(".view-back");
+    if (backButton) backButton.addEventListener("click", openDashboard);
 
     if (main) main.scrollTo({ top: 0, behavior: "smooth" });
     history.replaceState(null, "", `#${view}`);
@@ -316,9 +373,7 @@ function setupNavigation() {
     link.addEventListener("click", event => {
       const href = link.getAttribute("href");
       const view = link.dataset.view || routeMap[href];
-
       if (!view) return;
-
       event.preventDefault();
       openView(view);
     });
@@ -326,27 +381,28 @@ function setupNavigation() {
 
   const startingHash = window.location.hash.replace("#", "");
   if (startingHash && routeMap[`#${startingHash}`] && startingHash !== "dashboard") {
-    openView(startingHash);
+    openView(routeMap[`#${startingHash}`]);
   }
 }
 
 function renderDetailView(view) {
   const titles = {
-    live: ["Live Matches", "Dedicated live match center for matches currently in progress."],
-    today: ["Today's Matches", "Full match list for the selected day."],
-    groups: ["All Groups", "Every group in the tournament, shown as dedicated group cards."],
-    teams: ["Group Standings", "Full standings view for all tournament groups."],
-    bracket: ["Knockout Bracket", "Expanded knockout view. Teams fill in as the group stage advances."],
-    stats: ["Stats", "Top scorers and tournament statistics."],
-    venues: ["Venues", "Host city and stadium overview."],
-    alerts: ["Tournament Alerts", "High-signal tournament updates only."]
+    matches: ["Matches", "FotMob-style match list with date, status, score, group, and venue."],
+    matchcenter: ["Match Center", "Focused match hub inspired by SofaScore/FotMob match pages."],
+    groups: ["Groups", "All 12 groups with compact tables and clickable group cards."],
+    bracket: ["Bracket", "Expanded knockout map inspired by tournament bracket pages."],
+    teams: ["Teams", "Team hub for all 48 teams, grouped and sortable later."],
+    players: ["Players", "Player stats page prepared for scorers, assists, cards, and ratings."],
+    venues: ["Venues", "Host city and stadium overview for the 16 World Cup venues."],
+    alerts: ["Alerts", "Forza-style high-signal tournament updates only."]
   };
 
-  const [title, subtitle] = titles[view] || titles.live;
+  const [title, subtitle] = titles[view] || titles.matches;
 
   return `
-    <div class="view-header">
+    <div class="view-header app-view-header">
       <div>
+        <span class="view-kicker">World Cup 2026</span>
         <h2>${title}</h2>
         <p>${subtitle}</p>
       </div>
@@ -358,212 +414,239 @@ function renderDetailView(view) {
 
 function renderDetailContent(view) {
   switch (view) {
-    case "live":
-      return renderLiveDetail();
-    case "today":
-      return renderTodayDetail();
+    case "matches":
+      return renderMatchesPage();
+    case "matchcenter":
+      return renderMatchCenterPage();
     case "groups":
-      return renderGroupsDetail();
-    case "teams":
-      return renderTeamsDetail();
+      return renderGroupsPage();
     case "bracket":
-      return renderBracketDetail();
-    case "stats":
-      return renderStatsDetail();
+      return renderBracketPage();
+    case "teams":
+      return renderTeamsPage();
+    case "players":
+      return renderPlayersPage();
     case "venues":
-      return renderVenuesDetail();
+      return renderVenuesPage();
     case "alerts":
-      return renderAlertsDetail();
+      return renderAlertsPage();
     default:
-      return renderLiveDetail();
+      return renderMatchesPage();
   }
 }
 
-function renderLiveDetail() {
-  if (!WC_DATA.liveMatches.length) {
-    return `
-      <div class="view-card full">
-        <h3>No live matches right now</h3>
-        <p>This is intentional in v9. We removed fake live scores and prepared this view for the live-score API connection.</p>
-      </div>
-    `;
-  }
-
-  const live = WC_DATA.liveMatches.map(match => `
-    <div class="view-card wide">
-      <h3><span class="view-pill">${match.group}</span> ${match.minute}</h3>
-      <div class="score-row">
-        <div><div class="flag">${match.home.flag}</div><p>${match.home.name}</p></div>
-        <div class="score">${match.score}</div>
-        <div><div class="flag">${match.away.flag}</div><p>${match.away.name}</p></div>
-      </div>
-      <p class="venue">📍 ${match.venue}</p>
-    </div>
-  `).join("");
-
-  return `<div class="view-grid">${live}</div>`;
-}
-
-function renderTodayDetail() {
-  if (!WC_DATA.todayMatches.length) {
-    return `
-      <div class="view-card full">
-        <h3>No fixtures loaded</h3>
-        <p>The fixture list is ready for the next fixture-data pass.</p>
-      </div>
-    `;
-  }
+function renderMatchesPage() {
+  const matches = getAllMatches();
+  const live = matches.filter(match => match.isLive);
+  const upcoming = matches.filter(match => !match.isFinished && !match.isLive).slice(0, 18);
+  const finished = matches.filter(match => match.isFinished).slice(0, 10);
+  const list = [...live, ...upcoming, ...finished].slice(0, 32);
 
   return `
-    <div class="view-card full">
-      <h3>Match schedule</h3>
-      ${WC_DATA.todayMatches.map(match => `
-        <div class="view-match">
-          <span class="time">${match.time}</span>
-          <span>${match.home}</span>
-          <strong>vs</strong>
-          <span>${match.away}</span>
-          <em>${match.status || match.group}</em>
-        </div>
-      `).join("")}
+    <div class="view-toolbar">
+      <span>${matches.length || 0} matches loaded</span>
+      <span>${live.length} live</span>
+      <span>${finished.length} finished</span>
+      <button data-view-target="matchcenter" type="button">Open Match Center</button>
     </div>
-  `;
-}
 
-function renderGroupsDetail() {
-  return `
-    <div class="view-grid">
-      ${Object.entries(WC_DATA.groups).map(([letter, teams]) => `
-        <button class="full-group-card" data-open-group="${letter}" type="button">
-          <h3>Group ${letter}</h3>
-          ${teams.map(team => `
-            <div class="team-chip">
-              <span>${team.flag} ${team.name}</span>
-              <strong>${team.code}</strong>
-            </div>
-          `).join("")}
+    <div class="match-list-page">
+      ${list.map(match => `
+        <button class="match-row-card" data-view-target="matchcenter" type="button">
+          <div class="match-date">
+            <strong>${match.dateLabel || "TBD"}</strong>
+            <span>${match.time || "--:--"}</span>
+          </div>
+          <div class="match-teams">
+            <span>${match.home}</span>
+            <b>${match.score || "vs"}</b>
+            <span>${match.away}</span>
+          </div>
+          <div class="match-side">
+            ${renderStatusPill(match.status)}
+            <small>${match.group || "World Cup"}</small>
+          </div>
         </button>
       `).join("")}
     </div>
-    <div class="route-note">Tip: click a group card to open that group inside the standings view.</div>
   `;
 }
 
-function renderTeamsDetail() {
+function renderMatchCenterPage() {
+  const match = getFeaturedMatch();
+
+  if (!match) {
+    return `
+      <div class="view-card full">
+        <h3>No match selected</h3>
+        <p>Once match data is available, this page becomes the detailed match hub.</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="match-center-hero">
+      <div>
+        <span class="view-pill">${match.group || "World Cup"}</span>
+        <h2>${match.home} <strong>${match.score || "vs"}</strong> ${match.away}</h2>
+        <p>${match.dateLabel || "TBD"} · ${match.time || "--:--"} · ${match.venue || "Venue pending"}</p>
+      </div>
+      ${renderStatusPill(match.status)}
+    </div>
+
+    <div class="match-center-grid">
+      <div class="view-card wide">
+        <h3>Timeline</h3>
+        <div class="empty-state"><strong>Timeline ready.</strong><br>Goals, cards, VAR and substitutions will appear here when the API provides events.</div>
+      </div>
+
+      <div class="view-card wide">
+        <h3>Lineups</h3>
+        <div class="lineup-preview">
+          <span>${match.home}</span>
+          <em>Lineups unlock near kickoff</em>
+          <span>${match.away}</span>
+        </div>
+      </div>
+
+      <div class="view-card wide">
+        <h3>Match stats</h3>
+        <div class="stat-bars">
+          <p><span>Possession</span><b>—</b></p>
+          <p><span>Shots</span><b>—</b></p>
+          <p><span>xG</span><b>—</b></p>
+          <p><span>Corners</span><b>—</b></p>
+        </div>
+      </div>
+
+      <div class="view-card wide">
+        <h3>Group impact</h3>
+        <p>This panel will show how the result changes qualification once standings data is reliable.</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderGroupsPage() {
   return `
     <div class="view-grid">
       ${Object.entries(WC_DATA.groups).map(([letter, teams]) => `
-        <div class="view-card wide">
+        <button class="full-group-card group-page-card" data-open-group="${letter}" type="button">
           <h3>Group ${letter}</h3>
-          <table class="view-table">
-            <thead>
-              <tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr>
-            </thead>
+          <table class="mini-table">
             <tbody>
               ${teams.map((team, index) => `
                 <tr>
                   <td>${index + 1}</td>
                   <td>${team.flag} ${team.name}</td>
-                  <td>${team.p}</td>
-                  <td>${team.gd}</td>
-                  <td><strong>${team.pts}</strong></td>
+                  <td>${team.pts}</td>
                 </tr>
               `).join("")}
             </tbody>
           </table>
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderTeamsPage() {
+  const teams = getAllTeams();
+
+  return `
+    <div class="view-toolbar">
+      <span>${teams.length} teams</span>
+      <span>12 groups</span>
+      <span>Click team pages later</span>
+    </div>
+    <div class="team-grid-page">
+      ${teams.map(team => `
+        <div class="team-card-page">
+          <div class="team-card-main">
+            <span>${team.flag}</span>
+            <div>
+              <strong>${team.name}</strong>
+              <small>Group ${team.group} · ${team.code}</small>
+            </div>
+          </div>
+          <div class="team-card-stats">
+            <span>P ${team.p}</span>
+            <span>GD ${team.gd}</span>
+            <span>PTS ${team.pts}</span>
+          </div>
         </div>
       `).join("")}
     </div>
   `;
 }
 
-function renderBracketDetail() {
+function renderBracketPage() {
+  const columns = [
+    ["Round of 32", "1A vs 2B", "1C vs 2D", "1E vs 2F", "1G vs 2H", "1I vs 2J", "1K vs 2L"],
+    ["Round of 16", "Winner path", "Winner path", "Winner path", "Winner path"],
+    ["Quarter-finals", "QF 1", "QF 2", "QF 3", "QF 4"],
+    ["Semi-finals", "SF 1", "SF 2"],
+    ["Final", "🏆 19 July 2026"]
+  ];
+
   return `
     <div class="view-card full">
-      <div class="bracket-detail">
-        <div class="bracket-column">
-          <h3>Round of 32</h3>
-          ${Array.from({ length: 8 }, (_, i) => `<div class="bracket-slot">Match ${i + 1}</div>`).join("")}
-        </div>
-        <div class="bracket-column">
-          <h3>Round of 16</h3>
-          ${Array.from({ length: 4 }, (_, i) => `<div class="bracket-slot">Winner ${i + 1}</div>`).join("")}
-        </div>
-        <div class="bracket-column">
-          <h3>Quarter-finals</h3>
-          ${Array.from({ length: 2 }, (_, i) => `<div class="bracket-slot">QF ${i + 1}</div>`).join("")}
-        </div>
-        <div class="bracket-column">
-          <h3>Semi-finals</h3>
-          <div class="bracket-slot">SF 1</div>
-          <div class="bracket-slot">SF 2</div>
-        </div>
-        <div class="bracket-column">
-          <h3>Final</h3>
-          <div class="bracket-slot">🏆 19 July 2026</div>
-        </div>
+      <div class="bracket-detail app-bracket">
+        ${columns.map(column => `
+          <div class="bracket-column">
+            <h3>${column[0]}</h3>
+            ${column.slice(1).map(slot => `<div class="bracket-slot">${slot}</div>`).join("")}
+          </div>
+        `).join("")}
       </div>
-      <div class="route-note">The bracket is a real dedicated page now, but teams cannot be filled until knockout qualifiers are known.</div>
+      <div class="route-note">Bracket seeding stays placeholder until group qualification is mathematically known.</div>
     </div>
   `;
 }
 
-function renderStatsDetail() {
+function renderPlayersPage() {
   const scorersBlock = WC_DATA.scorers.length
     ? `
       <table class="view-table">
         <thead><tr><th>#</th><th>Player</th><th>Goals</th></tr></thead>
         <tbody>
           ${WC_DATA.scorers.map(player => `
-            <tr>
-              <td>${player.rank}</td>
-              <td>${player.player}</td>
-              <td><strong>${player.goals}</strong></td>
-            </tr>
+            <tr><td>${player.rank}</td><td>${player.player}</td><td><strong>${player.goals}</strong></td></tr>
           `).join("")}
         </tbody>
       </table>
     `
-    : `
-      <div class="empty-state">
-        <strong>No scorer table yet.</strong><br>
-        This avoids showing fake Golden Boot data before a live/stat feed is connected.
-      </div>
-    `;
+    : `<div class="empty-state"><strong>No player stats yet.</strong><br>Scorers, assists, cards and ratings will appear when the API provides player-level data.</div>`;
 
   return `
     <div class="view-grid">
-      <div class="view-card wide">
-        <h3>Top scorers</h3>
-        ${scorersBlock}
-      </div>
-      <div class="view-card wide">
-        <h3>Tournament totals</h3>
-        <p>${WC_DATA.tournament.metrics.teams} teams · ${WC_DATA.tournament.metrics.matches} matches · ${WC_DATA.tournament.metrics.groups} groups · ${WC_DATA.tournament.metrics.venues} venues</p>
-      </div>
+      <div class="view-card wide"><h3>Top scorers</h3>${scorersBlock}</div>
+      <div class="view-card wide"><h3>Assists</h3><div class="empty-state">Prepared for assist leaders.</div></div>
+      <div class="view-card wide"><h3>Cards</h3><div class="empty-state">Prepared for yellow/red card leaders.</div></div>
+      <div class="view-card wide"><h3>Ratings</h3><div class="empty-state">Prepared for player ratings if connected later.</div></div>
     </div>
   `;
 }
 
-function renderVenuesDetail() {
+function renderVenuesPage() {
   return `
     <div class="view-grid">
       ${WC_DATA.venues.map(venue => `
-        <div class="view-card">
+        <div class="view-card venue-page-card">
           <h3>${venue.name}</h3>
-          <p>${venue.city}, ${venue.country}</p>
-          <p>${venue.matches ? `${venue.matches} matches listed` : "Match count pending in data layer"}</p>
+          <p>${venue.city || "Host city pending"}${venue.country ? `, ${venue.country}` : ""}</p>
+          <span class="view-pill">${venue.matches ? `${venue.matches} matches` : "World Cup venue"}</span>
         </div>
       `).join("")}
     </div>
   `;
 }
 
-function renderAlertsDetail() {
+function renderAlertsPage() {
   return `
     <div class="view-grid">
       ${WC_DATA.alerts.map(alert => `
-        <div class="view-card wide">
+        <div class="view-card wide alert-page-card ${alert.type}">
           <h3>${alert.type.toUpperCase()}</h3>
           <p>${alert.text}</p>
         </div>

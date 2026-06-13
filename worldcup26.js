@@ -372,6 +372,24 @@
       return (a.date?.getTime() || 0) - (b.date?.getTime() || 0);
     });
 
+    WC_DATA.allMatches = enriched.map(item => ({
+      dateISO: item.date ? item.date.toISOString() : "",
+      dateLabel: item.date ? item.date.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) : "TBD",
+      time: formatTime(item.date),
+      home: teamLabel(item.home),
+      away: teamLabel(item.away),
+      homeName: teamName(item.home),
+      awayName: teamName(item.away),
+      homeFlag: flagForTeam(item.home),
+      awayFlag: flagForTeam(item.away),
+      group: stageName(item.game),
+      status: isFinished(item.game) ? "FT" : (isLive(item.game) ? "LIVE" : (rawStatus(item.game).toUpperCase() || "Upcoming")),
+      score: scoreText(item.game),
+      venue: venueName(item.game, stadiumsById),
+      isLive: isLive(item.game),
+      isFinished: isFinished(item.game)
+    }));
+
     const live = enriched.filter(item => isLive(item.game));
     const today = enriched.filter(item => {
       return item.date && item.date.toISOString().slice(0, 10) === todayKey;
