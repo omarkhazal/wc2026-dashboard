@@ -273,7 +273,7 @@ function renderDataPanel() {
       <p><span>Matches</span><strong>${meta.mode === "live" || meta.mode === "repo" || meta.mode === "cache" ? "Connected" : "Fallback"}</strong></p>
       <p><span>Teams</span><strong>Connected</strong></p>
       <p><span>Stadiums</span><strong>Connected</strong></p>
-      <p><span>Standings</span><strong>Local safe mode</strong></p>
+      <p><span>Standings</span><strong>${WC_DATA.standingsMeta?.mode === "computed" ? `Computed · ${WC_DATA.standingsMeta.countedMatches} matches` : "Local safe mode"}</strong></p>
       <p><span>Lineups / events</span><strong>Pending</strong></p>
       <p><span>Player stats</span><strong>Pending</strong></p>
     </div>
@@ -1075,7 +1075,7 @@ function renderPlayersPage() {
 
       <div class="view-card wide">
         <h3>Data status</h3>
-        <p>${apiAlert ? apiAlert.text : "Using local fallback data. Live API status will appear here after sync."}</p>
+        <p>${apiAlert ? apiAlert.text : "Using local fallback data. Live API status will appear here after sync."}</p><p class="subtle-note">Standings: ${WC_DATA.standingsMeta?.mode === "computed" ? `computed from ${WC_DATA.standingsMeta.countedMatches} result rows` : "local safe mode"}</p>
       </div>
 
       <div class="view-card wide stat-module-card muted">

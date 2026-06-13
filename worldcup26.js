@@ -384,6 +384,145 @@
     });
   }
 
+  function applyComputedStandings(enriched) {
+    if (!WC_DATA.groups || !Object.keys(WC_DATA.groups).length) return 0;
+
+    const localByCode = {};
+    const localByName = {};
+
+    Object.entries(WC_DATA.groups).forEach(([group, teams]) => {
+      teams.forEach(team => {
+        const row = {
+          group,
+          code: team.code,
+          flag: team.flag,
+          name: team.name,
+          p: 0,
+          w: 0,
+          d: 0,
+          l: 0,
+          gf: 0,
+          ga: 0,
+          pts: 0
+        };
+
+        if (team.code) localByCode[String(team.code).toUpperCase()] = row;
+        if (team.name) localByName[String(team.name).toLowerCase()] = row;
+      });
+    });
+
+    const tables = {};
+    Object.keys(WC_DATA.groups).forEach(group => {
+      tables[group] = WC_DATA.groups[group].map(team => ({
+        group,
+        code: team.code,
+        flag: team.flag,
+        name: team.name,
+        p: 0,
+        w: 0,
+        d: 0,
+        l: 0,
+        gf: 0,
+        ga: 0,
+        pts: 0
+      }));
+    });
+
+    function findRow(apiTeam, group) {
+      const code = String(teamCode(apiTeam) || "").toUpperCase();
+      const name = String(teamName(apiTeam) || "").toLowerCase();
+
+      const local =
+        (code && localByCode[code]) ||
+        (name && localByName[name]);
+
+      if (!local) return null;
+
+      return tables[group]?.find(row => row.code === local.code || row.name === local.name) || null;
+    }
+
+    let counted = 0;
+
+    enriched.forEach(item => {
+      const group = groupLetter(stageName(item.game));
+      if (!group || !tables[group]) return;
+
+      const homeScore = scoreFor(item.game, "home");
+      const awayScore = scoreFor(item.game, "away");
+
+      if (homeScore === null || awayScore === null) return;
+      if (!isFinished(item.game) && !isLive(item.game)) return;
+
+      const homeGoals = Number(homeScore);
+      const awayGoals = Number(awayScore);
+      if (!Number.isFinite(homeGoals) || !Number.isFinite(awayGoals)) return;
+
+      const home = findRow(item.home, group);
+      const away = findRow(item.away, group);
+      if (!home || !away) return;
+
+      home.p += 1;
+      away.p += 1;
+      home.gf += homeGoals;
+      home.ga += awayGoals;
+      away.gf += awayGoals;
+      away.ga += homeGoals;
+
+      if (homeGoals > awayGoals) {
+        home.w += 1;
+        away.l += 1;
+        home.pts += 3;
+      } else if (awayGoals > homeGoals) {
+        away.w += 1;
+        home.l += 1;
+        away.pts += 3;
+      } else {
+        home.d += 1;
+        away.d += 1;
+        home.pts += 1;
+        away.pts += 1;
+      }
+
+      counted += 1;
+    });
+
+    if (!counted) return 0;
+
+    Object.entries(tables).forEach(([group, rows]) => {
+      WC_DATA.groups[group] = rows
+        .map(row => ({
+          flag: row.flag,
+          name: row.name,
+          code: row.code,
+          p: row.p,
+          gd: `${row.gf - row.ga >= 0 ? "+" : ""}${row.gf - row.ga}`,
+          pts: row.pts,
+          gf: row.gf,
+          ga: row.ga,
+          w: row.w,
+          d: row.d,
+          l: row.l
+        }))
+        .sort((a, b) => {
+          return (
+            (Number(b.pts) || 0) - (Number(a.pts) || 0) ||
+            numericGoalDifference(b.gd) - numericGoalDifference(a.gd) ||
+            (Number(b.gf) || 0) - (Number(a.gf) || 0) ||
+            String(a.name).localeCompare(String(b.name))
+          );
+        });
+    });
+
+    WC_DATA.standingsMeta = {
+      mode: "computed",
+      source: WC_DATA.apiMeta?.source || "match results",
+      countedMatches: counted,
+      updatedAt: new Date().toISOString()
+    };
+
+    return counted;
+  }
+
   function applyTeams(teams) {
     if (!Array.isArray(teams) || !teams.length) return 0;
 
@@ -461,6 +600,8 @@
       return (b.date?.getTime() || 0) - (a.date?.getTime() || 0);
     });
 
+    const computedStandings = applyComputedStandings(enriched);
+
     WC_DATA.liveMatches = live.slice(0, 4).map(item => ({
       group: stageName(item.game),
       minute: item.game.minute || item.game.elapsed || item.game.time_elapsed || rawStatus(item.game).toUpperCase() || "LIVE",
@@ -492,7 +633,8 @@
       games: games.length,
       live: live.length,
       today: schedule.length,
-      finished: finished.length
+      finished: finished.length,
+      computedStandings
     };
   }
 

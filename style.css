@@ -2312,3 +2312,11 @@ body:not(.dashboard-ready) .detail-view {
   border-color: rgba(66,211,146,.35);
   background: rgba(66,211,146,.11);
 }
+
+
+/* v42 Standings normalizer */
+.subtle-note {
+  margin-top: 8px;
+  color: #92a2d5;
+  font-size: .78rem;
+}
