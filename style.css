@@ -2707,3 +2707,406 @@ body {
 .match-section .empty-state {
   color: #9badde;
 }
+
+
+/* v48 visual reset — back toward the original dark Home Assistant / command-center mockup */
+:root {
+  --wc-bg: #060a0f;
+  --wc-shell: #0a1017;
+  --wc-panel: rgba(15, 22, 31, .94);
+  --wc-panel-soft: rgba(18, 27, 38, .84);
+  --wc-border: rgba(148, 163, 184, .14);
+  --wc-border-strong: rgba(148, 163, 184, .22);
+  --wc-text: #eef4ff;
+  --wc-muted: #8fa0b7;
+  --wc-faint: #5f7188;
+  --wc-blue: #7bb4ff;
+  --wc-green: #22c55e;
+  --wc-red: #ff3b5c;
+  --wc-gold: #f6c85f;
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(56, 189, 248, .10), transparent 28%),
+    radial-gradient(circle at 90% 10%, rgba(34, 197, 94, .06), transparent 24%),
+    var(--wc-bg) !important;
+  color: var(--wc-text);
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+.app {
+  background: transparent;
+}
+
+/* Compact left rail, not the oversized purple tournament poster */
+.sidebar {
+  width: 230px;
+  flex-basis: 230px;
+  padding: 18px 16px;
+  background:
+    linear-gradient(180deg, rgba(10, 16, 23, .98), rgba(7, 11, 17, .98)) !important;
+  border-right: 1px solid var(--wc-border);
+  box-shadow: 18px 0 40px rgba(0, 0, 0, .24);
+}
+
+.brand {
+  text-align: left !important;
+  margin-bottom: 22px !important;
+  padding: 14px;
+  border: 1px solid var(--wc-border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .025);
+}
+
+.trophy {
+  font-size: 1.65rem !important;
+  margin-bottom: 10px !important;
+}
+
+.brand h1 {
+  font-size: .78rem !important;
+  line-height: 1.15;
+  letter-spacing: .08em !important;
+  color: var(--wc-text);
+}
+
+.year {
+  font-size: 2.05rem !important;
+  line-height: 1;
+  letter-spacing: .22em !important;
+  margin: 8px 0 !important;
+  color: var(--wc-text);
+}
+
+.brand p {
+  color: var(--wc-muted) !important;
+  font-size: .67rem !important;
+  letter-spacing: .08em;
+}
+
+.favorite-chip {
+  width: 100%;
+  justify-content: center;
+  margin-top: 12px;
+  background: rgba(255, 255, 255, .035) !important;
+  border: 1px solid var(--wc-border) !important;
+  color: var(--wc-text) !important;
+}
+
+.nav {
+  gap: 5px !important;
+}
+
+.nav-section {
+  color: var(--wc-faint) !important;
+  margin: 18px 8px 6px;
+  font-size: .68rem;
+  letter-spacing: .18em;
+}
+
+.nav a {
+  padding: 10px 12px !important;
+  border-radius: 11px !important;
+  color: #dbe7ff !important;
+  font-size: .86rem !important;
+  border: 1px solid transparent;
+  background: transparent !important;
+}
+
+.nav a.active,
+.nav a:hover {
+  background: rgba(123, 180, 255, .10) !important;
+  border-color: rgba(123, 180, 255, .22);
+  box-shadow: inset 3px 0 0 var(--wc-blue);
+}
+
+.date-card {
+  margin-top: 20px !important;
+  padding: 14px !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, .025) !important;
+  border-color: var(--wc-border) !important;
+}
+
+.date-card h3 {
+  font-size: .75rem !important;
+  color: var(--wc-muted);
+}
+
+.main {
+  padding: 18px 20px 28px !important;
+  background: transparent;
+}
+
+/* Top dashboard: compact command-center cards instead of colorful hero */
+.top-row {
+  grid-template-columns: 2.2fr repeat(4, 1fr) !important;
+  gap: 12px !important;
+  margin-bottom: 12px !important;
+}
+
+.hero-card,
+.kpi,
+.panel,
+.view-card,
+.match-section {
+  background: var(--wc-panel) !important;
+  border: 1px solid var(--wc-border) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .22) !important;
+  border-radius: 14px !important;
+}
+
+.hero-card {
+  min-height: 128px !important;
+  padding: 18px 20px !important;
+  background:
+    linear-gradient(135deg, rgba(15, 22, 31, .96), rgba(13, 20, 28, .96)) !important;
+  border-top: 2px solid rgba(123, 180, 255, .34) !important;
+}
+
+.hero-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(123, 180, 255, .06), transparent 38%),
+    radial-gradient(circle at 78% 20%, rgba(34, 197, 94, .10), transparent 22%);
+  pointer-events: none;
+}
+
+.hero-trophy {
+  font-size: 2.4rem !important;
+  opacity: .95;
+}
+
+.hero-center h2 {
+  font-size: .72rem !important;
+  color: var(--wc-muted);
+}
+
+.countdown {
+  font-size: 2.25rem !important;
+  letter-spacing: .08em !important;
+}
+
+.countdown span {
+  color: var(--wc-muted);
+  font-size: .7rem !important;
+}
+
+.hero-center p {
+  color: var(--wc-text);
+  font-size: .78rem;
+}
+
+.host-flags {
+  background: rgba(255, 255, 255, .04) !important;
+  border: 1px solid var(--wc-border);
+  min-width: 92px !important;
+  padding: 9px 11px !important;
+}
+
+.kpi {
+  min-height: 128px !important;
+  padding: 16px !important;
+  border-top: 2px solid rgba(148, 163, 184, .16) !important;
+}
+
+.kpi span {
+  background: rgba(123, 180, 255, .10) !important;
+  color: var(--wc-blue) !important;
+}
+
+.kpi h3 {
+  font-size: 2rem !important;
+  margin-top: 12px !important;
+}
+
+.kpi p,
+.kpi small {
+  color: var(--wc-muted) !important;
+}
+
+.hero-data-badge {
+  background: rgba(34, 197, 94, .10) !important;
+  border: 1px solid rgba(34, 197, 94, .25) !important;
+  color: #dfffea !important;
+}
+
+/* Dense panel grid like the original option C mockup */
+.dashboard-grid {
+  gap: 12px !important;
+  align-items: start;
+}
+
+.panel {
+  padding: 14px !important;
+}
+
+.panel-header {
+  margin-bottom: 12px !important;
+}
+
+.panel-header h2,
+.panel h2,
+.view-card h3,
+.match-section-head h3 {
+  font-size: .92rem !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase;
+}
+
+.panel-header a {
+  color: var(--wc-blue) !important;
+  font-size: .74rem !important;
+}
+
+.live-panel,
+.today-panel,
+.standings-panel,
+.bracket-panel,
+.all-groups-panel,
+.results-panel {
+  grid-column: span 4;
+}
+
+.scorers-panel,
+.alerts-panel {
+  grid-column: span 2;
+}
+
+.data-panel {
+  grid-column: span 4 !important;
+}
+
+.info-panel {
+  grid-column: span 3;
+}
+
+.venue-panel {
+  grid-column: span 5;
+}
+
+.fixture,
+.result-row,
+.scorer,
+.alert,
+.info-row,
+.data-coverage-list p,
+.match-facts p {
+  border-color: rgba(148, 163, 184, .10) !important;
+}
+
+.score,
+.result-score,
+.match-score-block h2 {
+  color: var(--wc-text);
+}
+
+.status-pill.live,
+.red-dot {
+  background: var(--wc-red) !important;
+  box-shadow: 0 0 14px rgba(255, 59, 92, .55) !important;
+}
+
+.status-pill.done {
+  background: rgba(34, 197, 94, .12) !important;
+  color: #8fffb9 !important;
+  border: 1px solid rgba(34, 197, 94, .26);
+}
+
+.status-pill.upcoming {
+  background: rgba(123, 180, 255, .10) !important;
+  color: #b9d8ff !important;
+  border: 1px solid rgba(123, 180, 255, .24);
+}
+
+.tabs span,
+.view-pill,
+.match-section-head span,
+.form-chip {
+  background: rgba(255, 255, 255, .045) !important;
+  border: 1px solid var(--wc-border) !important;
+}
+
+.tabs span.active-tab {
+  background: rgba(123, 180, 255, .14) !important;
+  color: var(--wc-text) !important;
+  border-color: rgba(123, 180, 255, .30) !important;
+}
+
+.standings-table th,
+.view-table th,
+.mini-table td,
+.view-table td,
+.standings-table td {
+  border-color: rgba(148, 163, 184, .10) !important;
+}
+
+.data-status-card,
+.timeline-state,
+.readiness-grid div,
+.match-team-side,
+.match-score-block,
+.team-next-strip {
+  background: rgba(255, 255, 255, .035) !important;
+  border-color: var(--wc-border) !important;
+}
+
+.full-group-card,
+.team-card-page,
+.match-row-card,
+.team-match-row {
+  background: rgba(255, 255, 255, .035) !important;
+  border-color: var(--wc-border) !important;
+}
+
+.full-group-card:hover,
+.team-card-page:hover,
+.match-row-card:hover,
+.team-match-row:hover {
+  border-color: rgba(123, 180, 255, .34) !important;
+  background: rgba(123, 180, 255, .07) !important;
+}
+
+.venue-map {
+  background:
+    linear-gradient(rgba(123, 180, 255, .055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(123, 180, 255, .055) 1px, transparent 1px),
+    rgba(3, 10, 18, .82) !important;
+  background-size: 24px 24px !important;
+  border: 1px solid rgba(123, 180, 255, .08);
+}
+
+/* Remove the purple/orange visual drift from the groups */
+.group-mini,
+.group-card,
+.full-group-card {
+  background: rgba(255, 255, 255, .035) !important;
+  border: 1px solid var(--wc-border) !important;
+}
+
+@media (max-width: 1180px) {
+  .top-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .hero-card {
+    grid-column: span 2;
+  }
+
+  .live-panel,
+  .today-panel,
+  .standings-panel,
+  .data-panel,
+  .bracket-panel,
+  .all-groups-panel,
+  .results-panel,
+  .info-panel,
+  .venue-panel,
+  .scorers-panel,
+  .alerts-panel {
+    grid-column: span 12 !important;
+  }
+}
