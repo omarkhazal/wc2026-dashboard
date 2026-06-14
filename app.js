@@ -465,18 +465,28 @@ function getAllMatches() {
 
 function getTeamMatches(team) {
   if (!team) return [];
-  const name = String(team.name || "").toLowerCase();
-  const code = String(team.code || "").toLowerCase();
+  const name = normalizeTeamLookup(team.name);
+  const code = normalizeTeamLookup(team.code);
 
   return getAllMatches().filter(match => {
+    const exactCodes = [
+      normalizeTeamLookup(match.homeCode),
+      normalizeTeamLookup(match.awayCode)
+    ].filter(Boolean);
+
+    if (code && exactCodes.includes(code)) return true;
+
     const text = [
       match.home,
       match.away,
       match.homeName,
-      match.awayName
-    ].filter(Boolean).join(" ").toLowerCase();
+      match.awayName,
+      match.homeCode,
+      match.awayCode
+    ].filter(Boolean).join(" ");
 
-    return text.includes(name) || text.includes(code);
+    const normalized = normalizeTeamLookup(text);
+    return (name && normalized.includes(name)) || (code && normalized.includes(code));
   });
 }
 
@@ -737,21 +747,23 @@ function normalizeTeamLookup(value) {
     .trim();
 }
 
-function findTeamForMatchLabel(label, fallbackName) {
-  const haystack = normalizeTeamLookup(`${fallbackName || ""} ${label || ""}`);
+function findTeamForMatchLabel(label, fallbackName, fallbackCode) {
+  const codeNeedle = normalizeTeamLookup(fallbackCode);
+  const haystack = normalizeTeamLookup(`${fallbackCode || ""} ${fallbackName || ""} ${label || ""}`);
   if (!haystack) return null;
 
   return getAllTeams().find(team => {
     const name = normalizeTeamLookup(team.name);
     const code = normalizeTeamLookup(team.code);
+    if (codeNeedle && code && codeNeedle === code) return true;
     return (name && haystack.includes(name)) || (code && haystack.includes(code));
   }) || null;
 }
 
 function getMatchTeamContext(match) {
   return {
-    home: findTeamForMatchLabel(match.home, match.homeName),
-    away: findTeamForMatchLabel(match.away, match.awayName)
+    home: findTeamForMatchLabel(match.home, match.homeName, match.homeCode),
+    away: findTeamForMatchLabel(match.away, match.awayName, match.awayCode)
   };
 }
 

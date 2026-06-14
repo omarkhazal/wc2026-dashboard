@@ -2701,3 +2701,9 @@ body {
     flex-direction: column;
   }
 }
+
+
+/* v47 live/team link fix */
+.match-section .empty-state {
+  color: #9badde;
+}

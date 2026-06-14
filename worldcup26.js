@@ -6,8 +6,8 @@
   const API_BASE = "https://worldcup26.ir/get";
   const CACHE_KEY = "wc2026LastGoodApiData";
   const CACHE_VERSION = 22;
-  const LIVE_WORDS = ["live", "in_progress", "in progress", "playing", "halftime", "half-time"];
-  const FINISHED_WORDS = ["complete", "completed", "finished", "full_time", "full-time", "ft", "ended"];
+  const LIVE_WORDS = ["live", "in_progress", "in progress", "playing", "started", "running", "ongoing", "1h", "2h", "first half", "second half", "halftime", "half-time", "half time"];
+  const FINISHED_WORDS = ["complete", "completed", "finished", "full_time", "full-time", "full time", "ft", "ended", "final"];
   const SCHEDULED_WORDS = ["scheduled", "not_started", "not started", "upcoming", "timed"];
 
   function getArray(payload, key) {
@@ -161,7 +161,7 @@
       const name = teamName(team).toLowerCase();
 
       if (id) byId[id] = team;
-      if (code) byCode[code] = team;
+      if (code) byCode[String(code).toUpperCase()] = team;
       if (name) byName[name] = team;
     });
 
@@ -190,7 +190,7 @@
       game[`${side}_code`] ||
       game[`${side}Code`];
 
-    if (code && indexes.byCode[String(code)]) return indexes.byCode[String(code)];
+    if (code && indexes.byCode[String(code).toUpperCase()]) return indexes.byCode[String(code).toUpperCase()];
 
     const name =
       game[`${side}_team_name_en`] ||
@@ -239,32 +239,142 @@
     return `${home} - ${away}`;
   }
 
+  function statusParts(game) {
+    const parts = [];
+    const values = [
+      game.status,
+      game.match_status,
+      game.matchStatus,
+      game.state,
+      game.status_en,
+      game.statusEn,
+      game.game_status,
+      game.gameStatus,
+      game.status_id,
+      game.statusId,
+      game.match_status_id,
+      game.matchStatusId
+    ];
+
+    values.forEach(value => {
+      if (value === undefined || value === null || value === "") return;
+
+      if (typeof value === "object") {
+        [
+          value.name,
+          value.label,
+          value.type,
+          value.state,
+          value.short,
+          value.description,
+          value.code,
+          value.id,
+          value.status_id,
+          value.statusId
+        ].forEach(part => {
+          if (part !== undefined && part !== null && part !== "") parts.push(String(part));
+        });
+        return;
+      }
+
+      parts.push(String(value));
+    });
+
+    if (game.is_live || game.isLive || game.live || game.in_play || game.inPlay || game.in_progress || game.inProgress) {
+      parts.push("live");
+    }
+
+    if (game.is_finished || game.isFinished || game.finished || game.completed || game.is_completed || game.isCompleted) {
+      parts.push("complete");
+    }
+
+    return parts;
+  }
+
   function rawStatus(game) {
-    return String(
-      game.status ||
-      game.match_status ||
-      game.state ||
-      game.status_en ||
-      game.game_status ||
-      ""
-    ).toLowerCase();
+    return statusParts(game).join(" ").toLowerCase();
+  }
+
+  function statusNumber(game) {
+    const candidates = [
+      game.status_id,
+      game.statusId,
+      game.match_status_id,
+      game.matchStatusId,
+      game.status?.id,
+      game.status?.code,
+      game.match_status?.id,
+      game.match_status?.code
+    ];
+
+    for (const value of candidates) {
+      const number = Number(value);
+      if (Number.isFinite(number)) return number;
+    }
+
+    return null;
+  }
+
+  function hasExplicitFinishedStatus(game) {
+    const status = rawStatus(game);
+    const number = statusNumber(game);
+
+    if (FINISHED_WORDS.some(word => status.includes(word))) return true;
+    if (number === 3 || number === 4 || number === 5) return true;
+    if (game.is_finished || game.isFinished || game.finished || game.completed || game.is_completed || game.isCompleted) return true;
+
+    return false;
+  }
+
+  function hasExplicitLiveStatus(game) {
+    const status = rawStatus(game);
+    const number = statusNumber(game);
+
+    if (LIVE_WORDS.some(word => status.includes(word))) return true;
+    if (number === 2) return true;
+    if (game.is_live || game.isLive || game.live || game.in_play || game.inPlay || game.in_progress || game.inProgress) return true;
+
+    return false;
+  }
+
+  function hasScore(game) {
+    return scoreFor(game, "home") !== null && scoreFor(game, "away") !== null;
   }
 
   function isLive(game) {
-    const status = rawStatus(game);
-    return LIVE_WORDS.some(word => status.includes(word));
+    if (hasExplicitFinishedStatus(game)) return false;
+    if (hasExplicitLiveStatus(game)) return true;
+
+    const date = gameDateObject(game);
+    if (date && hasScore(game)) {
+      const minutesFromKickoff = (Date.now() - date.getTime()) / 60000;
+      // Some sources expose score before they expose a clean live status.
+      // Treat score-bearing games near kickoff as live until they are clearly past a normal match window.
+      if (minutesFromKickoff >= -20 && minutesFromKickoff <= 150) return true;
+    }
+
+    return false;
   }
 
   function isFinished(game) {
-    const status = rawStatus(game);
-    if (FINISHED_WORDS.some(word => status.includes(word))) return true;
+    if (hasExplicitFinishedStatus(game)) return true;
+    if (isLive(game)) return false;
 
-    return scoreFor(game, "home") !== null && scoreFor(game, "away") !== null && !isLive(game);
+    const date = gameDateObject(game);
+    if (date && hasScore(game)) {
+      const minutesFromKickoff = (Date.now() - date.getTime()) / 60000;
+      if (minutesFromKickoff > 150) return true;
+    }
+
+    return hasScore(game) && !isScheduled(game);
   }
 
   function isScheduled(game) {
     const status = rawStatus(game);
-    if (!status) return !isFinished(game);
+    const number = statusNumber(game);
+
+    if (number === 1) return true;
+    if (!status) return !hasScore(game);
     return SCHEDULED_WORDS.some(word => status.includes(word));
   }
 
@@ -579,6 +689,10 @@
       away: teamLabel(item.away),
       homeName: teamName(item.home),
       awayName: teamName(item.away),
+      homeCode: teamCode(item.home),
+      awayCode: teamCode(item.away),
+      homeId: teamId(item.home),
+      awayId: teamId(item.away),
       homeFlag: flagForTeam(item.home),
       awayFlag: flagForTeam(item.away),
       group: stageName(item.game),
