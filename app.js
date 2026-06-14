@@ -695,7 +695,7 @@ function renderDetailView(view) {
     teamcenter: ["Team Center", "Focused team page with group table, fixtures, results, and team status."],
     players: ["Stats", "Tournament metrics and player-stat modules, without fake data."],
     venues: ["Venues", "Host city and stadium overview for the 16 World Cup venues."],
-    alerts: ["Alerts", "Forza-style high-signal tournament updates only."]
+    alerts: ["News", "High-signal World Cup updates in the dashboard style."]
   };
 
   const [title, subtitle] = titles[view] || titles.matches;

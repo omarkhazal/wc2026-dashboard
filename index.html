@@ -8,7 +8,7 @@
 <meta content="no-cache" http-equiv="Pragma"/>
 <meta content="0" http-equiv="Expires"/>
 <title>World Cup 2026 Dashboard</title>
-<link href="style.css?v=48" rel="stylesheet"/>
+<link href="style.css?v=49" rel="stylesheet"/>
 </head>
 <body>
 <div class="app">
@@ -17,13 +17,15 @@
 <div class="trophy">🏆</div>
 <h1>FIFA WORLD CUP</h1>
 <div class="year">2026</div>
-<p>CANADA • MEXICO • USA • v48</p>
+<p>CANADA • MEXICO • USA • v49</p>
 <div class="favorite-chip" id="favorite-chip">☆ Pick favorite team</div>
 </div>
 <nav class="nav">
 <span class="nav-section">Overview</span>
 <a class="active" data-view="dashboard" onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('dashboard'); return false;" href="#dashboard">⌂ Dashboard</a>
-<a data-view="matches" onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('matches'); return false;" href="#matches">⚽ Matches</a>
+<a data-view="matches" onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('matches'); return false;" href="#matches">📡 Live Matches</a>
+<a data-view="matches" onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('matches'); return false;" href="#today">🗓 Today</a>
+
 <a data-view="matchcenter" onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('matchcenter'); return false;" href="#matchcenter">🎯 Match Center</a>
 
 <span class="nav-section">Tournament</span>
@@ -35,7 +37,7 @@
 <a onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('dashboard'); setTimeout(() => { const main = document.querySelector('.main'); const target = document.getElementById('data-layer'); if (main && target) main.scrollTo({ top: Math.max(target.offsetTop - 24, 0), behavior: 'smooth' }); }, 90); return false;" href="#data-layer">🧬 Data Layer</a>
 <a data-view="players" onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('players'); return false;" href="#players">📊 Stats</a>
 <a data-view="venues" onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('venues'); return false;" href="#venues">🗺 Venues</a>
-<a data-view="alerts" onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('alerts'); return false;" href="#alerts">🚨 Alerts</a>
+<a data-view="alerts" onclick="event.preventDefault(); window.WC_OPEN_VIEW?.('alerts'); return false;" href="#alerts">📰 News</a>
 </nav>
 <div class="date-card">
 <h3>Tournament Dates</h3>
@@ -94,7 +96,7 @@
 
 </div>
 <div class="panel alerts-panel" id="alerts">
-<div class="panel-header"><h2>🚨 Tournament Alerts</h2><a href="#alerts">View all</a></div>
+<div class="panel-header"><h2>NEWS</h2><a href="#alerts">View all</a></div>
 
 
 
@@ -135,8 +137,8 @@
 </main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js"></script>
-<script src="data.js?v=48"></script>
-<script src="worldcup26.js?v=48"></script>
-<script src="app.js?v=48"></script>
+<script src="data.js?v=49"></script>
+<script src="worldcup26.js?v=49"></script>
+<script src="app.js?v=49"></script>
 </body>
 </html>
