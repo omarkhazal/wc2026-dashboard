@@ -844,43 +844,107 @@ function renderMatchDataReadiness(match) {
 }
 
 
+
+function parseScorePair(score) {
+  const match = String(score || "").match(/(\d+)\s*[-–]\s*(\d+)/);
+  return match ? [Number(match[1]), Number(match[2])] : null;
+}
+
+function teamAppearsInMatch(match, team, side) {
+  if (!match || !team) return false;
+  const label = side === "home"
+    ? `${match.homeName || ""} ${match.home || ""}`
+    : `${match.awayName || ""} ${match.away || ""}`;
+
+  const haystack = normalizeTeamLookup(label);
+  return haystack.includes(normalizeTeamLookup(team.name)) || haystack.includes(normalizeTeamLookup(team.code));
+}
+
+function getTeamResultCode(match, team) {
+  if (!match?.isFinished || !team) return "";
+  const score = parseScorePair(match.score);
+  if (!score) return "";
+
+  const isHome = teamAppearsInMatch(match, team, "home");
+  const isAway = teamAppearsInMatch(match, team, "away");
+  if (!isHome && !isAway) return "";
+
+  const teamGoals = isHome ? score[0] : score[1];
+  const opponentGoals = isHome ? score[1] : score[0];
+
+  if (teamGoals > opponentGoals) return "W";
+  if (teamGoals < opponentGoals) return "L";
+  return "D";
+}
+
+function renderFormChips(matches, team) {
+  const chips = matches
+    .filter(match => match.isFinished)
+    .map(match => getTeamResultCode(match, team))
+    .filter(Boolean)
+    .slice(-5);
+
+  if (!chips.length) {
+    return `<span class="form-chip empty">No results yet</span>`;
+  }
+
+  return chips.map(code => `<span class="form-chip ${code.toLowerCase()}">${code}</span>`).join("");
+}
+
+function getNextTeamMatch(matches) {
+  return matches.find(match => match.isLive) ||
+    matches.find(match => !match.isFinished) ||
+    matches[matches.length - 1] ||
+    null;
+}
+
+function renderCompactMatchRows(matches, emptyText = "No matches in this section.") {
+  if (!matches.length) {
+    return `<div class="empty-state">${emptyText}</div>`;
+  }
+
+  const all = getAllMatches();
+
+  return matches.map(match => `
+    <button class="team-match-row compact-match-row" data-match-index="${all.indexOf(match)}" type="button">
+      <span>${match.dateLabel || "TBD"} · ${match.time || "--:--"}</span>
+      <strong>${match.home} ${match.score || "vs"} ${match.away}</strong>
+      <em>${match.status || match.group}</em>
+    </button>
+  `).join("");
+}
+
+function renderMatchSection(title, matches, emptyText) {
+  return `
+    <section class="match-section">
+      <div class="match-section-head">
+        <h3>${title}</h3>
+        <span>${matches.length}</span>
+      </div>
+      ${renderCompactMatchRows(matches, emptyText)}
+    </section>
+  `;
+}
+
+
 function renderMatchesPage() {
   const matches = getAllMatches();
   const live = matches.filter(match => match.isLive);
-  const upcoming = matches.filter(match => !match.isFinished && !match.isLive).slice(0, 18);
-  const finished = matches.filter(match => match.isFinished).slice(0, 10);
-  const list = [...live, ...upcoming, ...finished].slice(0, 32);
+  const upcoming = matches.filter(match => !match.isFinished && !match.isLive).slice(0, 24);
+  const finished = matches.filter(match => match.isFinished).slice(-16).reverse();
 
   return `
     <div class="view-toolbar match-toolbar">
       <span>${matches.length || 0} matches loaded</span>
       <span>${live.length} live</span>
-      <span>${finished.length} finished</span>
+      <span>${finished.length} recent finals</span>
       <button data-view-target="matchcenter" type="button">Open featured match</button>
     </div>
 
-    <div class="match-list-page polished-match-list">
-      ${list.map(match => {
-        const index = matches.indexOf(match);
-        return `
-          <button class="match-row-card polished-match-row" data-match-index="${index}" type="button">
-            <div class="match-date">
-              <strong>${match.dateLabel || "TBD"}</strong>
-              <span>${match.time || "--:--"}</span>
-            </div>
-            <div class="match-teams">
-              <span>${match.home}</span>
-              <b>${match.score || "vs"}</b>
-              <span>${match.away}</span>
-            </div>
-            <div class="match-side">
-              ${renderStatusPill(match.status)}
-              <small>${match.group || "World Cup"}</small>
-              <em>${match.venue || "Venue pending"}</em>
-            </div>
-          </button>
-        `;
-      }).join("")}
+    <div class="match-sections-grid">
+      ${renderMatchSection("Live now", live, "No live matches right now.")}
+      ${renderMatchSection("Upcoming", upcoming, "No upcoming fixtures loaded.")}
+      ${renderMatchSection("Recent finals", finished, "No completed matches yet.")}
     </div>
   `;
 }
@@ -1048,16 +1112,21 @@ function renderTeamCenterPage() {
   const teamMatches = getTeamMatches(team);
   const groupRows = WC_DATA.groups[team.group] || [];
   const favorite = getFavoriteTeam();
+  const nextMatch = getNextTeamMatch(teamMatches);
+  const upcoming = teamMatches.filter(match => !match.isFinished).slice(0, 5);
+  const results = teamMatches.filter(match => match.isFinished).slice(-5).reverse();
 
   return `
-    <div class="team-center-hero">
+    <div class="team-center-hero team-center-hero-v46">
       <div class="team-center-main">
         <span>${team.flag}</span>
         <div>
           <h2>${team.name}</h2>
           <p>Group ${team.group} · ${team.code}</p>
+          <div class="team-form-row">${renderFormChips(teamMatches, team)}</div>
         </div>
       </div>
+
       <div class="team-center-actions">
         <button class="${favorite?.code === team.code ? "is-favorite" : ""}" data-favorite-team="${team.code}" type="button">
           ${favorite?.code === team.code ? "★ Favorite team" : "☆ Set favorite"}
@@ -1070,17 +1139,27 @@ function renderTeamCenterPage() {
       </div>
     </div>
 
+    <div class="team-next-strip">
+      <div>
+        <span>Next / latest</span>
+        <strong>${nextMatch ? `${nextMatch.home} ${nextMatch.score || "vs"} ${nextMatch.away}` : "No match loaded"}</strong>
+      </div>
+      <em>${nextMatch ? `${nextMatch.dateLabel || "TBD"} · ${nextMatch.time || "--:--"} · ${nextMatch.status || nextMatch.group}` : "Waiting for schedule data"}</em>
+    </div>
+
     <div class="match-subnav">
       <button data-view-target="teams" type="button">← All teams</button>
       <button data-view-target="groups" type="button">Group ${team.group}</button>
       <button data-view-target="matches" type="button">All matches →</button>
     </div>
 
-    <div class="match-center-grid">
+    <div class="match-center-grid team-center-grid-v46">
       <div class="view-card wide">
         <h3>Group ${team.group} table</h3>
         <table class="view-table">
-          <thead><tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
+          <thead>
+            <tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr>
+          </thead>
           <tbody>
             ${groupRows.map((row, index) => `
               <tr class="${row.code === team.code ? "highlight-row" : ""}">
@@ -1088,7 +1167,7 @@ function renderTeamCenterPage() {
                 <td>${row.flag} ${row.name}</td>
                 <td>${row.p}</td>
                 <td>${row.gd}</td>
-                <td><strong>${row.pts}</strong></td>
+                <td>${row.pts}</td>
               </tr>
             `).join("")}
           </tbody>
@@ -1096,101 +1175,23 @@ function renderTeamCenterPage() {
       </div>
 
       <div class="view-card wide">
-        <h3>Team matches</h3>
-        ${teamMatches.length ? teamMatches.slice(0, 8).map(match => `
-          <button class="team-match-row" data-match-index="${getAllMatches().indexOf(match)}" type="button">
-            <span>${match.dateLabel || "TBD"} · ${match.time || "--:--"}</span>
-            <strong>${match.home} ${match.score || "vs"} ${match.away}</strong>
-            <em>${match.status || match.group}</em>
-          </button>
-        `).join("") : `
-          <div class="empty-state">No team-specific fixtures matched yet. This will fill as normalized match names stabilize.</div>
-        `}
+        <h3>Upcoming fixtures</h3>
+        ${renderCompactMatchRows(upcoming, "No upcoming fixtures for this team.")}
       </div>
 
       <div class="view-card wide">
-        <h3>Qualification watch</h3>
-        <p>This will later show required result, advancement probability, and elimination scenarios for ${team.name}.</p>
+        <h3>Recent results</h3>
+        ${renderCompactMatchRows(results, "No results for this team yet.")}
       </div>
 
       <div class="view-card wide">
-        <h3>Team alerts</h3>
-        <p>No high-signal team alerts right now.</p>
-      </div>
-    </div>
-  `;
-}
-
-function renderBracketPage() {
-  const rounds = [
-    {
-      title: "Round of 32",
-      subtitle: "16 matches",
-      slots: [
-        "1A vs 2B", "1C vs 2D", "1E vs 2F", "1G vs 2H",
-        "1I vs 2J", "1K vs 2L", "1B vs 3rd", "1D vs 3rd",
-        "1F vs 3rd", "1H vs 3rd", "1J vs 3rd", "1L vs 3rd",
-        "2A vs 2C", "2E vs 2G", "2I vs 2K", "Best remaining"
-      ]
-    },
-    {
-      title: "Round of 16",
-      subtitle: "8 matches",
-      slots: Array.from({ length: 8 }, (_, index) => `R16 ${index + 1}`)
-    },
-    {
-      title: "Quarter-finals",
-      subtitle: "4 matches",
-      slots: Array.from({ length: 4 }, (_, index) => `QF ${index + 1}`)
-    },
-    {
-      title: "Semi-finals",
-      subtitle: "2 matches",
-      slots: ["SF 1", "SF 2"]
-    },
-    {
-      title: "Finals",
-      subtitle: "2 matches",
-      slots: ["🥉 Third-place match", "🏆 Final · 19 July 2026"]
-    }
-  ];
-
-  return `
-    <div class="view-toolbar bracket-toolbar">
-      <span>Expanded knockout map</span>
-      <span>Round of 32 → Final</span>
-      <span>Teams fill after group stage</span>
-    </div>
-
-    <div class="bracket-shell">
-      ${rounds.map(round => `
-        <section class="bracket-stage">
-          <div class="bracket-stage-head">
-            <h3>${round.title}</h3>
-            <span>${round.subtitle}</span>
-          </div>
-
-          <div class="bracket-slot-list">
-            ${round.slots.map((slot, index) => `
-              <div class="bracket-match-slot">
-                <small>${round.title === "Finals" ? "Match" : `Match ${index + 1}`}</small>
-                <strong>${slot}</strong>
-                <em>Pending</em>
-              </div>
-            `).join("")}
-          </div>
-        </section>
-      `).join("")}
-    </div>
-
-    <div class="view-grid bracket-info-grid">
-      <div class="view-card wide">
-        <h3>How this will work</h3>
-        <p>The bracket stays as seeded placeholders until group qualification is known. Once the source has knockout match data, these slots can become real match cards.</p>
-      </div>
-      <div class="view-card wide">
-        <h3>What comes next</h3>
-        <p>We can later add path highlighting for your favorite team, host country badges, venue names, and winner connectors.</p>
+        <h3>Team data readiness</h3>
+        <div class="readiness-grid">
+          <div><strong>${WC_DATA.standingsMeta?.mode === "computed" ? "Computed" : "Safe mode"}</strong><span>Group table</span></div>
+          <div><strong>${teamMatches.length}</strong><span>Matches loaded</span></div>
+          <div><strong>${results.length}</strong><span>Results loaded</span></div>
+          <div><strong>Pending</strong><span>Squad/player stats</span></div>
+        </div>
       </div>
     </div>
   `;

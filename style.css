@@ -2573,3 +2573,131 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* v46 speed bundle: Team Center + grouped matches */
+.match-sections-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.match-section {
+  border: 1px solid rgba(255, 255, 255, .08);
+  background: rgba(10, 18, 37, .82);
+  border-radius: 18px;
+  padding: 16px;
+  min-height: 260px;
+}
+
+.match-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.match-section-head h3 {
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-size: .95rem;
+}
+
+.match-section-head span {
+  color: #9badde;
+  border: 1px solid rgba(255, 255, 255, .08);
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+
+.compact-match-row {
+  width: 100%;
+  text-align: left;
+}
+
+.team-center-hero-v46 {
+  background:
+    radial-gradient(circle at 12% 20%, rgba(123, 180, 255, .18), transparent 30%),
+    linear-gradient(135deg, rgba(11, 19, 42, .98), rgba(33, 21, 73, .94));
+}
+
+.team-form-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.form-chip {
+  display: inline-flex;
+  min-width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: .75rem;
+  background: rgba(255, 255, 255, .08);
+  color: #dfe7ff;
+}
+
+.form-chip.w {
+  background: rgba(78, 224, 138, .18);
+  color: #8cffbd;
+}
+
+.form-chip.d {
+  background: rgba(255, 212, 102, .18);
+  color: #ffe08a;
+}
+
+.form-chip.l {
+  background: rgba(255, 80, 110, .18);
+  color: #ff8aa0;
+}
+
+.form-chip.empty {
+  padding: 0 10px;
+  width: auto;
+  color: #9badde;
+  font-weight: 600;
+}
+
+.team-next-strip {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(123, 180, 255, .16);
+  background: rgba(123, 180, 255, .06);
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+}
+
+.team-next-strip span,
+.team-next-strip em {
+  color: #9badde;
+  font-style: normal;
+  font-size: .82rem;
+}
+
+.team-next-strip strong {
+  display: block;
+  margin-top: 4px;
+}
+
+.team-center-grid-v46 {
+  margin-top: 16px;
+}
+
+@media (max-width: 1150px) {
+  .match-sections-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-next-strip {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
