@@ -159,13 +159,17 @@ function renderScorers() {
   if (!panel) return;
 
   panel.querySelectorAll(".scorer-row, .empty-state").forEach(item => item.remove());
+  panel.hidden = false;
 
   if (!WC_DATA.scorers.length) {
-    panel.hidden = true;
+    panel.insertAdjacentHTML("beforeend", `
+      <div class="empty-state scorers-placeholder">
+        <strong>Scorer feed pending.</strong><br>
+        Goalscorer table will populate when player statistics are connected.
+      </div>
+    `);
     return;
   }
-
-  panel.hidden = false;
 
   WC_DATA.scorers.forEach(player => {
     panel.insertAdjacentHTML("beforeend", `

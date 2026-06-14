@@ -3199,3 +3199,139 @@ body {
     grid-column: span 12 !important;
   }
 }
+
+
+/* v50 target layout correction — fill the screen and restore target panel order */
+html,
+body,
+.app {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.app {
+  display: flex !important;
+}
+
+.main {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  max-width: none !important;
+}
+
+.top-row,
+.dashboard-grid,
+.detail-view {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Keep the page from feeling like a narrow column on wide displays */
+@media (min-width: 1400px) {
+  .main {
+    padding-right: 28px !important;
+  }
+
+  .top-row {
+    grid-template-columns: minmax(520px, 2.45fr) repeat(4, minmax(150px, .58fr)) !important;
+  }
+}
+
+/* The target screenshot is a deliberate dashboard mosaic, so enforce panel ordering */
+.live-panel { order: 1; grid-column: span 4 !important; }
+.today-panel { order: 2; grid-column: span 4 !important; }
+.standings-panel { order: 3; grid-column: span 4 !important; }
+
+.scorers-panel { order: 4; grid-column: span 2 !important; min-height: 270px; }
+.alerts-panel { order: 5; grid-column: span 2 !important; min-height: 270px; }
+.bracket-panel { order: 6; grid-column: span 4 !important; min-height: 270px; }
+.all-groups-panel { order: 7; grid-column: span 4 !important; min-height: 270px; }
+
+.info-panel { order: 8; grid-column: span 3 !important; }
+.venue-panel { order: 9; grid-column: span 4 !important; }
+.results-panel { order: 10; grid-column: span 5 !important; }
+
+.data-panel {
+  order: 99 !important;
+  grid-column: span 12 !important;
+  margin-top: 0 !important;
+}
+
+/* Make top panels more like the reference instead of sparse empty boxes */
+.live-panel,
+.today-panel,
+.standings-panel {
+  min-height: 245px;
+}
+
+.live-panel .empty-state,
+.today-panel .empty-state,
+.scorers-placeholder {
+  border: 1px dashed rgba(120, 170, 220, .24);
+  background: rgba(255,255,255,.025);
+  border-radius: 8px;
+  padding: 16px;
+  color: #aab8ca;
+}
+
+.scorers-panel .empty-state {
+  margin-top: 8px;
+}
+
+.alerts-panel .panel-header h2::before {
+  content: "";
+}
+
+.alerts-panel .alert {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+}
+
+/* Make the target visual less cramped at screenshot scale */
+.panel-header h2,
+.panel h2 {
+  white-space: nowrap;
+}
+
+.score-row p,
+.fixture span,
+.result-row span,
+.standings-table td,
+.info-row {
+  font-size: .88rem;
+}
+
+/* Sidebar/date proportions closer to target screenshot */
+.sidebar {
+  min-width: 240px !important;
+}
+
+.date-card {
+  position: relative;
+}
+
+.date-card p {
+  line-height: 1.55;
+}
+
+/* Remove accidental right gutter caused by scroll container + narrow content */
+.main > * {
+  max-width: none !important;
+}
+
+@media (max-width: 1200px) {
+  .scorers-panel,
+  .alerts-panel,
+  .bracket-panel,
+  .all-groups-panel,
+  .info-panel,
+  .venue-panel,
+  .results-panel,
+  .data-panel,
+  .live-panel,
+  .today-panel,
+  .standings-panel {
+    grid-column: span 12 !important;
+  }
+}
