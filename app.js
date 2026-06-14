@@ -535,7 +535,8 @@ function attachFavoriteButtons(root, rerender) {
 
 function renderStatusPill(status) {
   const value = String(status || "Upcoming");
-  const kind = value.includes("LIVE") ? "live" : value.includes("FT") ? "done" : "upcoming";
+  const upper = value.toUpperCase();
+  const kind = upper.includes("LIVE") ? "live" : (upper.includes("FT") || upper.includes("FINAL") || upper.includes("COMPLETE")) ? "done" : "upcoming";
   return `<span class="status-pill ${kind}">${value}</span>`;
 }
 
@@ -727,6 +728,122 @@ function renderDetailContent(view) {
   }
 }
 
+
+function normalizeTeamLookup(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function findTeamForMatchLabel(label, fallbackName) {
+  const haystack = normalizeTeamLookup(`${fallbackName || ""} ${label || ""}`);
+  if (!haystack) return null;
+
+  return getAllTeams().find(team => {
+    const name = normalizeTeamLookup(team.name);
+    const code = normalizeTeamLookup(team.code);
+    return (name && haystack.includes(name)) || (code && haystack.includes(code));
+  }) || null;
+}
+
+function getMatchTeamContext(match) {
+  return {
+    home: findTeamForMatchLabel(match.home, match.homeName),
+    away: findTeamForMatchLabel(match.away, match.awayName)
+  };
+}
+
+function matchGroupLetter(match) {
+  const text = String(match.group || "");
+  const direct = text.match(/Group\s+([A-L])/i);
+  return direct ? direct[1].toUpperCase() : "";
+}
+
+function renderMatchTimelineState(match) {
+  if (match.isLive) {
+    return `
+      <div class="timeline-state live">
+        <strong>Live score connected</strong>
+        <span>${match.home} ${match.score || "vs"} ${match.away}</span>
+      </div>
+      <div class="timeline-state muted">
+        <strong>Events pending</strong>
+        <span>Goals, cards, VAR checks and substitutions will appear here when the API exposes event data.</span>
+      </div>
+    `;
+  }
+
+  if (match.isFinished) {
+    return `
+      <div class="timeline-state done">
+        <strong>Final score recorded</strong>
+        <span>${match.home} ${match.score || "vs"} ${match.away}</span>
+      </div>
+      <div class="timeline-state muted">
+        <strong>Detailed timeline pending</strong>
+        <span>The result is connected; minute-by-minute events are not available from the current data layer yet.</span>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="timeline-state upcoming">
+      <strong>Pre-match mode</strong>
+      <span>Kickoff scheduled for ${match.dateLabel || "TBD"} · ${match.time || "--:--"}.</span>
+    </div>
+    <div class="timeline-state muted">
+      <strong>Lineups pending</strong>
+      <span>Lineups usually unlock close to kickoff when a supported event feed is connected.</span>
+    </div>
+  `;
+}
+
+function renderMatchGroupSnapshot(match) {
+  const group = matchGroupLetter(match);
+  const rows = group ? WC_DATA.groups[group] || [] : [];
+  const { home, away } = getMatchTeamContext(match);
+  const codes = new Set([home?.code, away?.code].filter(Boolean));
+
+  if (!rows.length) {
+    return `<p>Group table unavailable for this match.</p>`;
+  }
+
+  return `
+    <table class="view-table match-group-table">
+      <thead>
+        <tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr>
+      </thead>
+      <tbody>
+        ${rows.map((team, index) => `
+          <tr class="${codes.has(team.code) ? "highlight-row" : ""}">
+            <td>${index + 1}</td>
+            <td>${team.flag} ${team.name}</td>
+            <td>${team.p}</td>
+            <td>${team.gd}</td>
+            <td>${team.pts}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderMatchDataReadiness(match) {
+  const meta = WC_DATA.apiMeta || {};
+  const standings = WC_DATA.standingsMeta || {};
+  return `
+    <div class="readiness-grid">
+      <div><strong>${meta.mode === "repo" ? "Repo cache" : meta.mode || "Fallback"}</strong><span>Match source</span></div>
+      <div><strong>${standings.mode === "computed" ? "Computed" : "Safe mode"}</strong><span>Standings</span></div>
+      <div><strong>${match.score && match.score !== "vs" ? "Connected" : "Scheduled"}</strong><span>Score</span></div>
+      <div><strong>Pending</strong><span>Lineups/events</span></div>
+    </div>
+  `;
+}
+
+
 function renderMatchesPage() {
   const matches = getAllMatches();
   const live = matches.filter(match => match.isLive);
@@ -735,37 +852,41 @@ function renderMatchesPage() {
   const list = [...live, ...upcoming, ...finished].slice(0, 32);
 
   return `
-    <div class="view-toolbar">
+    <div class="view-toolbar match-toolbar">
       <span>${matches.length || 0} matches loaded</span>
       <span>${live.length} live</span>
       <span>${finished.length} finished</span>
-      <button data-view-target="matchcenter" type="button">Open Match Center</button>
+      <button data-view-target="matchcenter" type="button">Open featured match</button>
     </div>
 
-    <div class="match-list-page">
-      ${list.map(match => `
-        <button class="match-row-card" data-view-target="matchcenter" type="button">
-          <div class="match-date">
-            <strong>${match.dateLabel || "TBD"}</strong>
-            <span>${match.time || "--:--"}</span>
-          </div>
-          <div class="match-teams">
-            <span>${match.home}</span>
-            <b>${match.score || "vs"}</b>
-            <span>${match.away}</span>
-          </div>
-          <div class="match-side">
-            ${renderStatusPill(match.status)}
-            <small>${match.group || "World Cup"}</small>
-          </div>
-        </button>
-      `).join("")}
+    <div class="match-list-page polished-match-list">
+      ${list.map(match => {
+        const index = matches.indexOf(match);
+        return `
+          <button class="match-row-card polished-match-row" data-match-index="${index}" type="button">
+            <div class="match-date">
+              <strong>${match.dateLabel || "TBD"}</strong>
+              <span>${match.time || "--:--"}</span>
+            </div>
+            <div class="match-teams">
+              <span>${match.home}</span>
+              <b>${match.score || "vs"}</b>
+              <span>${match.away}</span>
+            </div>
+            <div class="match-side">
+              ${renderStatusPill(match.status)}
+              <small>${match.group || "World Cup"}</small>
+              <em>${match.venue || "Venue pending"}</em>
+            </div>
+          </button>
+        `;
+      }).join("")}
     </div>
   `;
 }
 
 function renderMatchCenterPage() {
-  const match = getFeaturedMatch();
+  const { match, index } = getSelectedMatch();
 
   if (!match) {
     return `
@@ -776,28 +897,72 @@ function renderMatchCenterPage() {
     `;
   }
 
+  const { home, away } = getMatchTeamContext(match);
+  const group = matchGroupLetter(match);
+  const score = match.score || "vs";
+
   return `
-    <div class="match-center-hero">
-      <div>
-        <span class="view-pill">${match.group || "World Cup"}</span>
-        <h2>${match.home} <strong>${match.score || "vs"}</strong> ${match.away}</h2>
-        <p>${match.dateLabel || "TBD"} · ${match.time || "--:--"} · ${match.venue || "Venue pending"}</p>
+    <div class="match-center-hero match-center-hero-v45">
+      <div class="match-team-side">
+        <span>${home?.flag || match.homeFlag || ""}</span>
+        <strong>${home?.name || match.homeName || match.home}</strong>
+        <small>${home?.code || "HOME"}</small>
       </div>
-      ${renderStatusPill(match.status)}
+
+      <div class="match-score-block">
+        <span class="view-pill">${match.group || "World Cup"}${index >= 0 ? ` · Match ${index + 1}` : ""}</span>
+        <h2>${score}</h2>
+        ${renderStatusPill(match.status)}
+        <p>${match.dateLabel || "TBD"} · ${match.time || "--:--"}</p>
+        <em>${match.venue || "Venue pending"}</em>
+      </div>
+
+      <div class="match-team-side">
+        <span>${away?.flag || match.awayFlag || ""}</span>
+        <strong>${away?.name || match.awayName || match.away}</strong>
+        <small>${away?.code || "AWAY"}</small>
+      </div>
     </div>
 
-    <div class="match-center-grid">
-      <div class="view-card wide">
+    <div class="match-subnav">
+      <button data-view-target="matches" type="button">← All matches</button>
+      ${home ? `<button data-team-code="${home.code}" type="button">${home.flag} ${home.name}</button>` : ""}
+      ${away ? `<button data-team-code="${away.code}" type="button">${away.flag} ${away.name}</button>` : ""}
+      ${group ? `<button data-view-target="groups" type="button">Group ${group}</button>` : ""}
+    </div>
+
+    <div class="match-center-grid match-center-grid-v45">
+      <div class="view-card wide match-timeline-card">
         <h3>Timeline</h3>
-        <div class="empty-state"><strong>Timeline ready.</strong><br>Goals, cards, VAR and substitutions will appear here when the API provides events.</div>
+        ${renderMatchTimelineState(match)}
+      </div>
+
+      <div class="view-card wide">
+        <h3>Group impact</h3>
+        ${renderMatchGroupSnapshot(match)}
+      </div>
+
+      <div class="view-card wide">
+        <h3>Data readiness</h3>
+        ${renderMatchDataReadiness(match)}
       </div>
 
       <div class="view-card wide">
         <h3>Lineups</h3>
-        <div class="lineup-preview">
-          <span>${match.home}</span>
+        <div class="lineup-preview lineup-preview-v45">
+          <span>${home?.name || match.home}</span>
           <em>Lineups unlock near kickoff</em>
-          <span>${match.away}</span>
+          <span>${away?.name || match.away}</span>
+        </div>
+      </div>
+
+      <div class="view-card wide">
+        <h3>Match facts</h3>
+        <div class="match-facts">
+          <p><span>Status</span><strong>${match.status || "Upcoming"}</strong></p>
+          <p><span>Stage</span><strong>${match.group || "World Cup"}</strong></p>
+          <p><span>Kickoff</span><strong>${match.dateLabel || "TBD"} · ${match.time || "--:--"}</strong></p>
+          <p><span>Venue</span><strong>${match.venue || "Venue pending"}</strong></p>
         </div>
       </div>
 
@@ -809,11 +974,6 @@ function renderMatchCenterPage() {
           <p><span>xG</span><b>—</b></p>
           <p><span>Corners</span><b>—</b></p>
         </div>
-      </div>
-
-      <div class="view-card wide">
-        <h3>Group impact</h3>
-        <p>This panel will show how the result changes qualification once standings data is reliable.</p>
       </div>
     </div>
   `;
