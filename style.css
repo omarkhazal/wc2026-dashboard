@@ -3335,3 +3335,142 @@ body,
     grid-column: span 12 !important;
   }
 }
+
+
+/* v51 release-candidate development bundle */
+.release-grid-two {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.bracket-page-shell {
+  display: grid;
+  gap: 16px;
+}
+
+.bracket-page-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px;
+  border-radius: 12px;
+  background:
+    radial-gradient(circle at 85% 70%, rgba(255,184,74,.22), transparent 20%),
+    linear-gradient(135deg, rgba(28, 25, 76, .96), rgba(80, 16, 86, .84));
+  border: 1px solid rgba(150, 110, 255, .28);
+}
+
+.bracket-page-hero h2 {
+  margin: 8px 0 6px;
+  font-size: 1.8rem;
+}
+
+.bracket-page-hero p {
+  color: #b9c7df;
+  max-width: 720px;
+}
+
+.bracket-page-hero strong {
+  white-space: nowrap;
+  font-size: 1.1rem;
+}
+
+.bracket-board {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr .9fr .8fr;
+  gap: 12px;
+}
+
+.bracket-column {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(8, 18, 32, .92);
+  border: 1px solid rgba(85, 140, 190, .18);
+}
+
+.bracket-column h3 {
+  color: #dce8ff;
+  font-size: .82rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 10px;
+}
+
+.bracket-slot {
+  min-height: 34px;
+  display: grid;
+  gap: 3px;
+  padding: 7px 8px;
+  margin-bottom: 6px;
+  border-radius: 7px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(148, 163, 184, .14);
+}
+
+.bracket-slot small {
+  color: #7fb8ff;
+  font-size: .68rem;
+}
+
+.bracket-slot span {
+  font-size: .82rem;
+  color: #eef6ff;
+}
+
+.groups-release-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.release-group-card {
+  text-align: left !important;
+  min-height: 220px;
+}
+
+.release-group-card .mini-table td {
+  padding: 7px 4px;
+}
+
+.provisional-qualifier td:first-child {
+  color: #9fffc1;
+  font-weight: 800;
+}
+
+.stats-command-grid {
+  margin-bottom: 16px;
+}
+
+.stat-pending-box {
+  border: 1px dashed rgba(120, 170, 220, .25);
+  border-radius: 10px;
+  padding: 16px;
+  color: #aab8ca;
+}
+
+.alert-command-strip {
+  margin-bottom: 16px;
+}
+
+.alert-page-card {
+  min-height: 130px;
+}
+
+.view-toolbar {
+  margin-bottom: 16px;
+}
+
+.view-grid {
+  gap: 14px;
+}
+
+@media (max-width: 1200px) {
+  .release-grid-two,
+  .bracket-board,
+  .groups-release-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bracket-page-hero {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -572,8 +572,8 @@ function setupNavigation() {
     "#venues": "venues",
     "#alerts": "alerts",
     "#dashboard": "dashboard",
-    "#live": "matches",
-    "#today": "matches"
+    "#live": "live",
+    "#today": "today"
   };
 
   function setActive(view) {
@@ -691,13 +691,15 @@ function setupNavigation() {
 
 function renderDetailView(view) {
   const titles = {
-    matches: ["Matches", "FotMob-style match list with date, status, score, group, and venue."],
+    live: ["Live Matches", "Current live fixtures and active score states from the repository cache."],
+    today: ["Today", "Today’s schedule, live games, and completed fixtures."],
+    matches: ["All Matches", "Full match hub with live, upcoming, and recent final sections."],
     matchcenter: ["Match Center", "Focused match hub inspired by SofaScore/FotMob match pages."],
-    groups: ["Groups", "All 12 groups with compact tables and clickable group cards."],
-    bracket: ["Bracket", "Expanded knockout map inspired by tournament bracket pages."],
+    groups: ["Groups", "All 12 groups with computed tables and clickable group cards."],
+    bracket: ["Bracket", "Knockout map, qualification placeholders, and tournament path."],
     teams: ["Teams", "Team hub for all 48 teams with clickable team cards."],
     teamcenter: ["Team Center", "Focused team page with group table, fixtures, results, and team status."],
-    players: ["Stats", "Tournament metrics and player-stat modules, without fake data."],
+    players: ["Stats", "Tournament metrics, data readiness, and available stat modules."],
     venues: ["Venues", "Host city and stadium overview for the 16 World Cup venues."],
     alerts: ["News", "High-signal World Cup updates in the dashboard style."]
   };
@@ -719,6 +721,10 @@ function renderDetailView(view) {
 
 function renderDetailContent(view) {
   switch (view) {
+    case "live":
+      return renderLivePage();
+    case "today":
+      return renderTodayPage();
     case "matches":
       return renderMatchesPage();
     case "matchcenter":
@@ -943,6 +949,81 @@ function renderMatchSection(title, matches, emptyText) {
 }
 
 
+
+function matchDateKey(match) {
+  const value = match?.dateISO || "";
+  return value ? String(value).slice(0, 10) : "";
+}
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function getTodayMatchesForPage() {
+  const matches = getAllMatches();
+  const todayKey = getTodayKey();
+  const direct = matches.filter(match => matchDateKey(match) === todayKey);
+
+  if (direct.length) return direct;
+
+  return (WC_DATA.todayMatches || []).map(match => ({
+    dateLabel: "Today",
+    time: match.time || "--:--",
+    home: match.home,
+    away: match.away,
+    group: match.group || "World Cup",
+    status: match.status || "Upcoming",
+    score: match.status && String(match.status).includes("-") ? match.status : "vs",
+    venue: match.venue || "",
+    isLive: false,
+    isFinished: false
+  }));
+}
+
+function renderLivePage() {
+  const live = getAllMatches().filter(match => match.isLive);
+  const next = getAllMatches().filter(match => !match.isFinished && !match.isLive).slice(0, 8);
+  const latest = getAllMatches().filter(match => match.isFinished).slice(-8).reverse();
+
+  return `
+    <div class="view-toolbar match-toolbar">
+      <span>${live.length} live now</span>
+      <span>${next.length} upcoming nearby</span>
+      <span>${WC_DATA.apiMeta?.mode === "repo" ? "Repository cache" : WC_DATA.apiMeta?.mode || "Data loading"}</span>
+      <button data-view-target="matches" type="button">All matches</button>
+    </div>
+
+    <div class="match-sections-grid release-grid-two">
+      ${renderMatchSection("Live now", live, "No live match detected in the current cache.")}
+      ${renderMatchSection("Next up", next, "No upcoming fixtures loaded.")}
+      ${renderMatchSection("Recent finals", latest, "No completed fixtures loaded.")}
+    </div>
+  `;
+}
+
+function renderTodayPage() {
+  const today = getTodayMatchesForPage();
+  const live = today.filter(match => match.isLive);
+  const upcoming = today.filter(match => !match.isFinished && !match.isLive);
+  const finals = today.filter(match => match.isFinished);
+
+  return `
+    <div class="view-toolbar match-toolbar">
+      <span>${today.length} fixtures today</span>
+      <span>${live.length} live</span>
+      <span>${finals.length} final</span>
+      <button data-view-target="matches" type="button">All matches</button>
+    </div>
+
+    <div class="match-sections-grid release-grid-two">
+      ${renderMatchSection("Live today", live, "No live fixtures today.")}
+      ${renderMatchSection("Upcoming today", upcoming, "No remaining fixtures loaded for today.")}
+      ${renderMatchSection("Final today", finals, "No completed fixtures today.")}
+    </div>
+  `;
+}
+
+
 function renderMatchesPage() {
   const matches = getAllMatches();
   const live = matches.filter(match => match.isLive);
@@ -1059,19 +1140,91 @@ function renderMatchCenterPage() {
   `;
 }
 
-function renderGroupsPage() {
+
+function renderBracketPage() {
+  const groups = Object.entries(WC_DATA.groups || {});
+  const seeds = groups.flatMap(([letter, teams]) => [
+    { label: `1${letter}`, team: teams[0] },
+    { label: `2${letter}`, team: teams[1] }
+  ]).slice(0, 32);
+
+  const rounds = [
+    ["Round of 32", seeds.slice(0, 16)],
+    ["Round of 16", Array.from({ length: 8 }, (_, i) => ({ label: `R16-${i + 1}` }))],
+    ["Quarter-finals", Array.from({ length: 4 }, (_, i) => ({ label: `QF-${i + 1}` }))],
+    ["Semi-finals", Array.from({ length: 2 }, (_, i) => ({ label: `SF-${i + 1}` }))],
+    ["Final", [{ label: "Final", team: null }]]
+  ];
+
   return `
-    <div class="view-grid">
-      ${Object.entries(WC_DATA.groups).map(([letter, teams]) => `
-        <button class="full-group-card group-page-card" data-open-group="${letter}" type="button">
+    <div class="bracket-page-shell">
+      <div class="bracket-page-hero">
+        <div>
+          <span class="view-pill">Knockout path</span>
+          <h2>Road to the final</h2>
+          <p>Bracket slots are seeded from current group-table positions and remain provisional until qualification is official.</p>
+        </div>
+        <strong>🏆 19 July 2026</strong>
+      </div>
+
+      <div class="bracket-board">
+        ${rounds.map(([title, items]) => `
+          <div class="bracket-column">
+            <h3>${title}</h3>
+            ${items.map(item => `
+              <div class="bracket-slot">
+                <small>${item.label}</small>
+                <span>${item.team ? `${item.team.flag} ${item.team.name}` : "TBD"}</span>
+              </div>
+            `).join("")}
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="view-grid">
+        <div class="view-card wide">
+          <h3>Bracket status</h3>
+          <p>Group-stage qualification is not final yet. This bracket intentionally avoids pretending knockout pairings are confirmed.</p>
+        </div>
+        <div class="view-card wide">
+          <h3>Data readiness</h3>
+          <div class="readiness-grid">
+            <div><strong>${WC_DATA.standingsMeta?.mode === "computed" ? "Computed" : "Safe mode"}</strong><span>Group positions</span></div>
+            <div><strong>Pending</strong><span>Confirmed qualifiers</span></div>
+            <div><strong>Pending</strong><span>Knockout results</span></div>
+            <div><strong>Ready</strong><span>Bracket UI</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+
+function renderGroupsPage() {
+  const groups = Object.entries(WC_DATA.groups || {});
+  const computed = WC_DATA.standingsMeta?.mode === "computed";
+
+  return `
+    <div class="view-toolbar">
+      <span>${groups.length} groups</span>
+      <span>${computed ? `Computed from ${WC_DATA.standingsMeta.countedMatches} result rows` : "Local safe mode"}</span>
+      <span>Top two shown as provisional qualifiers</span>
+    </div>
+
+    <div class="view-grid groups-release-grid">
+      ${groups.map(([letter, teams]) => `
+        <button class="full-group-card group-page-card release-group-card" data-open-group="${letter}" type="button">
           <h3>Group ${letter}</h3>
           <table class="mini-table">
             <tbody>
               ${teams.map((team, index) => `
-                <tr>
+                <tr class="${index < 2 ? "provisional-qualifier" : ""}">
                   <td>${index + 1}</td>
                   <td>${team.flag} ${team.name}</td>
-                  <td>${team.pts}</td>
+                  <td>P ${team.p}</td>
+                  <td>GD ${team.gd}</td>
+                  <td><strong>${team.pts}</strong></td>
                 </tr>
               `).join("")}
             </tbody>
@@ -1081,7 +1234,6 @@ function renderGroupsPage() {
     </div>
   `;
 }
-
 function renderTeamsPage() {
   const teams = getAllTeams();
   const favorite = getFavoriteTeam();
@@ -1217,6 +1369,11 @@ function renderPlayersPage() {
   const hasScorers = WC_DATA.scorers.length > 0;
   const apiAlert = (WC_DATA.alerts || []).find(alert => alert.apiSource);
   const metrics = WC_DATA.tournament.metrics;
+  const allTeams = getAllTeams();
+  const leaders = [...allTeams].sort((a, b) =>
+    (Number(b.pts) || 0) - (Number(a.pts) || 0) ||
+    (parseInt(String(b.gd).replace("+", ""), 10) || 0) - (parseInt(String(a.gd).replace("+", ""), 10) || 0)
+  ).slice(0, 8);
 
   const scorersBlock = hasScorers
     ? `
@@ -1251,23 +1408,30 @@ function renderPlayersPage() {
       </div>
 
       <div class="view-card wide">
+        <h3>Group leaders</h3>
+        <table class="view-table">
+          <thead><tr><th>#</th><th>Team</th><th>P</th><th>GD</th><th>PTS</th></tr></thead>
+          <tbody>
+            ${leaders.map((team, index) => `
+              <tr><td>${index + 1}</td><td>${team.flag} ${team.name}</td><td>${team.p}</td><td>${team.gd}</td><td><strong>${team.pts}</strong></td></tr>
+            `).join("")}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="view-card wide">
         <h3>Data status</h3>
-        <p>${apiAlert ? apiAlert.text : "Using local fallback data. Live API status will appear here after sync."}</p><p class="subtle-note">Standings: ${WC_DATA.standingsMeta?.mode === "computed" ? `computed from ${WC_DATA.standingsMeta.countedMatches} result rows` : "local safe mode"}</p>
+        <p>${apiAlert ? apiAlert.text : "Using local fallback data. Live API status will appear here after sync."}</p>
+        <p class="subtle-note">Standings: ${WC_DATA.standingsMeta?.mode === "computed" ? `computed from ${WC_DATA.standingsMeta.countedMatches} result rows` : "local safe mode"}</p>
       </div>
 
       <div class="view-card wide stat-module-card muted">
-        <h3>Team stats</h3>
-        <p>Prepared for goals for/against, clean sheets, shots, possession, and cards when available.</p>
-      </div>
-
-      <div class="view-card wide stat-module-card muted">
-        <h3>Player stats</h3>
-        <p>Prepared for scorers, assists, cards, minutes, and ratings once a player-stat source is connected.</p>
+        <h3>Pending stat modules</h3>
+        <p>Prepared for scorers, assists, cards, minutes, lineups, ratings, shots, xG, possession, and discipline once a reliable player/team stat source is connected.</p>
       </div>
     </div>
   `;
 }
-
 function renderVenuesPage() {
   const venues = WC_DATA.venues || [];
   const countries = venues.reduce((acc, venue) => {
@@ -1327,7 +1491,7 @@ function renderAlertsPage() {
     <div class="alert-command-strip">
       <div>
         <strong>${alerts.length}</strong>
-        <span>Total alerts</span>
+        <span>Total updates</span>
       </div>
       <div>
         <strong>${apiAlert ? "Online" : "Fallback"}</strong>
@@ -1335,7 +1499,7 @@ function renderAlertsPage() {
       </div>
       <div>
         <strong>${cleanAlerts.length}</strong>
-        <span>Tournament notes</span>
+        <span>News notes</span>
       </div>
     </div>
 
@@ -1344,7 +1508,7 @@ function renderAlertsPage() {
         <div class="view-card wide alert-page-card ${alert.type}">
           <div class="alert-card-head">
             <span>${alert.type === "warning" ? "⚠️" : "ℹ️"}</span>
-            <h3>${alert.apiSource ? "DATA STATUS" : alert.type.toUpperCase()}</h3>
+            <h3>${alert.apiSource ? "DATA STATUS" : "WORLD CUP UPDATE"}</h3>
           </div>
           <p>${alert.text}</p>
         </div>
