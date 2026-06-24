@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-23T22:50:43.651Z",
+  "generatedAt": "2026-06-24T10:34:42.845Z",
   "source": "worldcup26.ir",
   "games": [
     {
@@ -997,17 +997,17 @@
       "id": "46",
       "home_team_id": "48",
       "away_team_id": "46",
-      "home_score": "null",
-      "away_score": "null",
+      "home_score": "0",
+      "away_score": "1",
       "home_scorers": "null",
-      "away_scorers": "null",
+      "away_scorers": "{\"Ante Budimir 54'\"}",
       "group": "L",
       "matchday": "2",
       "local_date": "06/23/2026 19:00",
       "persian_date": "1405-04-02 19:00",
       "stadium_id": "12",
-      "finished": "FALSE",
-      "time_elapsed": "notstarted",
+      "finished": "TRUE",
+      "time_elapsed": "finished",
       "type": "group",
       "home_team_name_en": "Panama",
       "home_team_name_fa": "پاناما",
@@ -1019,17 +1019,17 @@
       "id": "47",
       "home_team_id": "44",
       "away_team_id": "42",
-      "home_score": "null",
-      "away_score": "null",
-      "home_scorers": "null",
+      "home_score": "1",
+      "away_score": "0",
+      "home_scorers": "{\"Dnil Mvnvz 76'\"}",
       "away_scorers": "null",
       "group": "K",
       "matchday": "2",
       "local_date": "06/23/2026 20:00",
       "persian_date": "1405-04-02 20:00",
       "stadium_id": "2",
-      "finished": "FALSE",
-      "time_elapsed": "notstarted",
+      "finished": "TRUE",
+      "time_elapsed": "finished",
       "type": "group",
       "home_team_name_en": "Colombia",
       "home_team_name_fa": "کلمبیا",
@@ -3411,38 +3411,50 @@
           "_id": "698985a46e8cb0bf61b5acb9"
         },
         {
-          "team_id": "48",
-          "mp": "1",
-          "w": "0",
+          "team_id": "46",
+          "mp": "2",
+          "w": "1",
           "l": "1",
+          "d": "0",
+          "pts": "3",
+          "gf": "3",
+          "ga": "4",
+          "gd": "-1",
+          "_id": "698985a46e8cb0bf61b5acb8"
+        },
+        {
+          "team_id": "48",
+          "mp": "2",
+          "w": "0",
+          "l": "2",
           "d": "0",
           "pts": "0",
           "gf": "0",
-          "ga": "1",
-          "gd": "-1",
-          "_id": "698985a46e8cb0bf61b5acba"
-        },
-        {
-          "team_id": "46",
-          "mp": "1",
-          "w": "0",
-          "l": "1",
-          "d": "0",
-          "pts": "0",
-          "gf": "2",
-          "ga": "4",
+          "ga": "2",
           "gd": "-2",
-          "_id": "698985a46e8cb0bf61b5acb8"
+          "_id": "698985a46e8cb0bf61b5acba"
         }
       ],
       "createdAt": "2026-02-09T06:58:44.396Z",
       "__v": 0,
-      "updatedAt": "2026-06-23T22:01:15.565Z"
+      "updatedAt": "2026-06-24T00:56:27.862Z"
     },
     {
       "_id": "698985a46e8cb0bf61b5acb0",
       "name": "K",
       "teams": [
+        {
+          "team_id": "44",
+          "mp": "2",
+          "w": "2",
+          "l": "0",
+          "d": "0",
+          "pts": "6",
+          "gf": "4",
+          "ga": "1",
+          "gd": "3",
+          "_id": "698985a46e8cb0bf61b5acb4"
+        },
         {
           "team_id": "41",
           "mp": "2",
@@ -3456,27 +3468,15 @@
           "_id": "698985a46e8cb0bf61b5acb1"
         },
         {
-          "team_id": "44",
-          "mp": "1",
-          "w": "1",
-          "l": "0",
-          "d": "0",
-          "pts": "3",
-          "gf": "3",
-          "ga": "1",
-          "gd": "2",
-          "_id": "698985a46e8cb0bf61b5acb4"
-        },
-        {
           "team_id": "42",
-          "mp": "1",
+          "mp": "2",
           "w": "0",
-          "l": "0",
+          "l": "1",
           "d": "1",
           "pts": "1",
           "gf": "1",
-          "ga": "1",
-          "gd": "0",
+          "ga": "2",
+          "gd": "-1",
           "_id": "698985a46e8cb0bf61b5acb2"
         },
         {
@@ -3494,7 +3494,7 @@
       ],
       "createdAt": "2026-02-09T06:58:44.392Z",
       "__v": 0,
-      "updatedAt": "2026-06-23T19:00:41.026Z"
+      "updatedAt": "2026-06-24T03:59:28.944Z"
     },
     {
       "_id": "698985a46e8cb0bf61b5ac80",
