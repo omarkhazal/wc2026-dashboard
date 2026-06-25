@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T10:24:14.471Z",
+  "generatedAt": "2026-06-25T17:34:18.310Z",
   "source": "worldcup26.ir",
   "games": [
     {
@@ -1843,8 +1843,8 @@
       "id": "55",
       "home_team_id": "18",
       "away_team_id": "19",
-      "home_score": "0",
-      "away_score": "0",
+      "home_score": "null",
+      "away_score": "null",
       "home_scorers": "null",
       "away_scorers": "null",
       "group": "E",
@@ -1865,8 +1865,8 @@
       "id": "56",
       "home_team_id": "20",
       "away_team_id": "17",
-      "home_score": "0",
-      "away_score": "0",
+      "home_score": "null",
+      "away_score": "null",
       "home_scorers": "null",
       "away_scorers": "null",
       "group": "E",
