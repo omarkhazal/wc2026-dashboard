@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T06:36:13.314Z",
+  "generatedAt": "2026-07-11T08:49:17.604Z",
   "source": "worldcup26.ir",
   "games": [
     {
@@ -2370,7 +2370,7 @@
       "persian_date": "1405-04-20 17:00",
       "stadium_id": "8",
       "finished": "FALSE",
-      "time_elapsed": "notstarted",
+      "time_elapsed": "live",
       "type": "qf",
       "home_team_label": "Winner Match 91",
       "away_team_label": "Winner Match 92",
