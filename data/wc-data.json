@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-14T17:40:46.060Z",
+  "generatedAt": "2026-07-14T19:23:08.676Z",
   "source": "worldcup26.ir",
   "games": [
     {
@@ -2425,10 +2425,17 @@
       "persian_date": "1405-04-23 14:00",
       "stadium_id": "4",
       "finished": "FALSE",
-      "time_elapsed": "notstarted",
+      "time_elapsed": "live",
       "type": "sf",
       "home_team_label": "Winner Match 97",
       "away_team_label": "Winner Match 98",
+      "away_penalty_misses": "null",
+      "away_penalty_score": "null",
+      "away_penalty_scorers": "null",
+      "home_penalty_misses": "null",
+      "home_penalty_score": "null",
+      "home_penalty_scorers": "null",
+      "match_minute": "null",
       "home_team_name_en": "France",
       "home_team_name_fa": "فرانسه",
       "away_team_name_en": "Spain",
